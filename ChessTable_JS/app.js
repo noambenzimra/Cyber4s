@@ -13,7 +13,9 @@ let table;
 let tblBody;
 let pieces = [];
 let boardData;
-
+let firstClick = [];
+let secondClick = [];
+let pieceNow = undefined;
 //___________________________________________________________________________________________________________Class Piece
 
 class Piece {
@@ -22,6 +24,11 @@ class Piece {
     this.col = col;
     this.type = type;
     this.player = player;
+  }
+
+  setMove(row, col) {
+    this.row = row;
+    this.col = col;
   }
 
   //   getPlayer() {
@@ -133,6 +140,11 @@ class Piece {
     result.push([-1, 0]);
     result.push([0, -1]);
     result.push([0, 1]);
+    result.push([1, 1]);
+    result.push([1, -1]);
+    result.push([-1, 1]);
+    result.push([-1, -1]);
+
     return result;
   }
 
@@ -160,50 +172,139 @@ class BoardData {
   getPiece(row, col) {
     for (let piece of this.pieces) {
       if (piece.row === row && piece.col === col) {
-        return piece.type;
+        return piece;
       }
     }
   }
 
-  setPiece(row, col, player) {
-    for (let piece of this.pieces) {
-      if (this.getPiece(row, col) === undefined) {
-        player.row = row;
-        player.col = col;
-      }
+  movePiece(row, col, player) {
+    // console.log(player.getPossibleMoves());
+
+    //console.log(this.freeToRide(player, row, col));
+    if (inRules(player, row, col)) {
+      removeImage(
+        table.rows[player.row].cells[player.col],
+        player.player,
+        player.type,
+        player.row,
+        player.col
+      );
+
+      player.setMove(row, col);
+      let player1 = player;
+      player = new BoardData(player1);
+      //console.log(player);
+      return player;
+
+      // }
     }
   }
+
+  //check if there is a player in front of the piece and check that the piece dont  go over(מעל שחקן אחר) another player instead of knight
+  // freeToRide(player) {
+  //   // console.log(this.pieces);
+  //   let row = player.row;
+  //   let col = player.col;
+  //   if (player.type === ROOK) {
+  //     for (let piece of this.pieces) {
+  //       //  console.log(piece.row);
+
+  //       if (piece.row === row || piece.col === col) {
+  //         for (let i = 7; i > 0; i--) {
+  //           if (
+  //             this.getPiece(row, i) !== undefined &&
+  //             player !== this.getPiece(row, i)
+  //           ) {
+  //             return false;
+  //           }
+  //         }
+  //       }
+  //       return true;
+  //     }
+  //   }
+
+  //   if (player.type === BISHOP) {
+  //     for (let piece of this.pieces) {
+  //       if (
+  //         this.getPiece(row + 1, col + 1) !== undefined ||
+  //         this.getPiece(row - 1, col + 1) !== undefined ||
+  //         this.getPiece(row + 1, col - 1) !== undefined ||
+  //         this.getPiece(row - 1, col - 1) !== undefined
+  //       ) {
+  //         return false;
+  //       } else return true;
+  //     }
+  //   }
+  // }
 }
-
 //____________________________________________________________________global function. like-addImage,addimageByIndex,onCellClick
-function addImage(cell, type, name) {
+function addImage(cell, type, name, row, col) {
   const image = document.createElement("img");
   image.src = "images/" + type + "/" + name + ".svg";
+  image.setAttribute("id", row + " " + col);
   cell.appendChild(image);
+}
+
+function removeImage(cell, type, name, row, col) {
+  //const image = document.createElement("img");
+  const image = document.getElementById(row + " " + col);
+  image.remove();
+
+  // console.log(image);
+  //cell.appendChild(image);
+}
+//check if you can go there(without checking if there is a player in front of you!!!!)
+function inRules(player, row, col) {
+  // let inRules=false;
+  let arr = [];
+  arr = player.getPossibleMoves();
+  // console.log(arr.length);
+  for (let i = 0; i <= arr.length; i++) {
+    for (let j = 0; j <= 2; j++) {
+      //console.log(arr[0][0] + "    " + arr[0][1]);
+      if (arr[i][j] == row && arr[i][j + 1] == col) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 let selectedCell = undefined;
 
 function onCellClick(e, row, col) {
   //clear previus selected move
-  console.log(boardData.getPiece(row, col) + " hello");
+  //console.log(boardData.getPiece(row, col) + " hello");
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
       table.rows[i].cells[j].classList.remove("options");
     }
   }
   //show possible moves
-  for (let piece of boardData.pieces) {
-    if (piece.row === row && piece.col === col) {
-      let possibleMoves = piece.getPossibleMoves();
-      for (let possibleMove of possibleMoves) {
-        // console.log(possibleMove);
-        const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
-        cell.classList.add("options");
-      }
+  const piece = boardData.getPiece(row, col);
+  if (piece !== undefined) {
+    pieceNow = boardData.getPiece(row, col);
+    let possibleMoves = piece.getPossibleMoves();
+    for (let possibleMove of possibleMoves) {
+      // console.log(possibleMove);
+      const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
+      cell.classList.add("options");
+    }
+  } else {
+    if (pieceNow !== undefined) {
+      //console.log(pieceNow);
+      const move = boardData.movePiece(row, col, pieceNow);
+      // console.log(move.pieces.row);
+      addImage(
+        table.rows[move.pieces.row].cells[move.pieces.col],
+        move.pieces.player,
+        move.pieces.type,
+        move.pieces.row,
+        move.pieces.col
+      );
+      pieceNow = undefined;
     }
   }
-
   let td = document.getElementsByTagName("td");
   //clear previus selected cell
   if (selectedCell !== undefined) {
@@ -214,7 +315,9 @@ function onCellClick(e, row, col) {
 
   selectedCell.classList.add("onIt");
 
-  table.addEventListener("click", (e) => {});
+  // table.addEventListener("click", (e) => {
+  //   movePiece();
+  // });
 }
 
 //_____________________________________________________________________________________getInitialPieces
@@ -279,6 +382,8 @@ function createChessBoard() {
       }
 
       //___________________________________________________________________________
+      //firstClick = [i, j];
+      // console.log(firstClick + "firstClick");
       td.addEventListener("click", (event) => onCellClick(event, i, j));
       //___________________________________________________________________________
     }
@@ -296,7 +401,9 @@ function createChessBoard() {
     addImage(
       tblBody.rows[piece.row].cells[piece.col],
       piece.player,
-      piece.type
+      piece.type,
+      piece.row,
+      piece.col
     );
   }
 }
