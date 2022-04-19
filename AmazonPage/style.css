@@ -1,0 +1,131 @@
+.grid-container {
+    display: grid;
+     grid-template-columns: 27% 40% 13% ; 
+     margin-left: 10%;
+     margin-right: 10%;
+     margin-top: 5%;
+     border-bottom: 1px solid rgb(236, 236, 236);
+    /* grid-template-columns: fit-content(400px) auto auto; */
+    
+  }
+  .grid-item {
+    /* border: 1px solid rgba(0, 0, 0, 0.8); */
+    /* padding: 20px; */
+    /* font-size: 30px; */
+    text-align:left;
+  }
+
+.tiny{
+    width: 50px;
+    height: 50px;
+     margin-right: 50%;
+}
+
+.border{
+    border: 1px solid rgb(219, 219, 219);
+}
+
+.button {
+    height: 30px;
+    width: 200px;
+    box-shadow: none;
+    border: none;
+
+    margin: top 10px; 
+    margin-left: 18px ;
+   }
+.newBorder
+{
+    border: 1px solid rgb(219, 219, 219);
+    height: 140px;
+    width: 240px;
+}
+
+.hoverblue:hover{
+    color: red;
+    cursor: pointer;
+   
+    /* text-decoration: underline red; */
+}
+   
+.grid-container2 {
+    display: grid;
+     grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% ;
+     margin-left: 10%;
+     margin-right: 10%;
+     margin-top: 30px;
+     border-bottom: 1px solid rgb(236, 236, 236);
+  }
+  .grid-item2 {
+    /* border: 1px solid rgba(0, 0, 0, 0.8); */
+    /* padding: 20px; */
+    font-size: 16px;
+    text-align:left;
+    object-fit: cover;
+    
+     
+   /* width: 150px; */
+  }
+  .price{
+    color: rgb(216, 9, 9); 
+    font-size: x-large;
+  }
+
+  .search{
+    background-image: url(https://cdn2.hubspot.net/hubfs/4004166/bioticresearch_website_assets/images/search_icon.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 40px;
+    width:800px;
+    border: 1px solid #000;
+    box-shadow: none;
+    -webkit-appearance: none;
+    height: 30px;
+    
+  }
+
+  .shelon{
+
+     margin: 5%;
+     display:block;
+
+  }
+   
+  div.radio-box {
+    width: 100px;
+    display: inline-block;
+    margin: 5px;
+    
+ }
+
+ .radio-box label {
+    display:block;
+    width: 100px;
+    text-align: center;
+ }
+
+ .radio-box input {
+    width: 20px;
+    display: block;
+    margin: 0px auto;
+ }
+
+
+/* .text:hover{
+    font-size: 0;
+}
+.text:hover:after{
+    content: attr(data-hover);
+
+button:hover + p.text{
+
+    color: rgb(88, 202, 230);
+}
+
+
+} */
+/* p {
+    font-weight: 300;
+    transition: color 1s ease;
+  } */
+
