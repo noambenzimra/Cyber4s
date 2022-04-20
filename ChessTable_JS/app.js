@@ -84,11 +84,16 @@ class Piece {
   //todo: filter out moves that are out of bounds
 
   getPawnRelativeMoves() {
-    //to do give different answer to different colors
+    let result = [];
     if (this.player == DARK_TYPE) {
-      return [[-1, 0]];
+      if (boardData.getPiece(this.row - 1, this.col) === undefined) {
+        result.push([-1, 0]);
+      }
     }
-    return [[1, 0]];
+    else if (boardData.getPiece(this.row + 1, this.col) === undefined) {
+      result.push([1, 0]);
+    }
+    return result;
   }
 
   getRookRelativeMoves() {
@@ -98,21 +103,6 @@ class Piece {
       if (boardData.getPiece(i + this.row, this.col) === undefined) {
         result.push([i, 0]);
       }
-      // else {
-      //   let frontPiece = boardData.getPiece(i + this.row, this.col);
-      //   let row = frontPiece.row;
-      //   let col = frontPiece.col;
-      //   console.log(frontPiece.row);
-      //   //console.log(result[0]);
-      //   for (let i = 0; i < result.length; i++) {
-      //     let arr = result[i];
-      //     if (arr[0] > row || arr[0] < row)
-      //       //result.splice(i, 0);
-      //       if (arr[1] > col || arr[1] < col) {
-      //         // result.splice(i, 1);
-      //       }
-      //   }
-      // }
 
       if (boardData.getPiece(-i + this.row, this.col) === undefined) {
         result.push([-i, 0]);
@@ -131,14 +121,20 @@ class Piece {
 
   getKnightRelativeMoves() {
     let result = [];
-    // for (let i = 1; i < BOARD_SIZE; i++) {
-    result.push([2, +1]);
-    result.push([2, -1]);
-    result.push([-2, +1]);
-    result.push([-2, -1]);
+    for (let i = -1; i <= 1; i++) {
+      if (i !== 0) {
+        if (boardData.getPiece(this.row + 2, i + this.col) === undefined) {
+          result.push([2, i]);
+        }
+        if (boardData.getPiece(this.row - 2, i + this.col) === undefined) {
+          result.push([-2, i]);
+        }
+      }
+    }
+
     return result;
-    // }
   }
+
 
   getBishopRelativeMoves() {
     let isAfter = true;
@@ -170,6 +166,8 @@ class Piece {
     console.log(result);
     return result;
   }
+
+
   getKingRelativeMoves() {
     let result = [];
     for (let i = -1; i <= 1; i++) {

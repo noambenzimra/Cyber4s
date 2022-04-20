@@ -6,14 +6,17 @@ body{
 
 h1{
     margin-left: 30%;
+    
    color: #441a03;
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
     
 }
 
 table{
-    width: 70%;
-    height: 70%;
+    /* table-layout: fixed; */
+    margin-top: 0%;
+    width: 50%;
+    height: 40%;
     border: 49px solid #462921;
     border-collapse:separate;
     
@@ -29,20 +32,24 @@ tr,td{
 }
 td{
     /* text-align: left; */
-    padding: 2.9%;
-    text-align: center;
-    vertical-align: middle;
+    height: 80px;
+    
     
     
 }
 
 .black{
     background-color:#725122;
+    text-align: center;
+    vertical-align: middle;
+    
     
 }
 
 .white{
     background-color: #b5915f;
+    text-align: center;
+    vertical-align: middle;
 }
 
 td:hover{
@@ -66,5 +73,5 @@ tr:nth-of-type(odd) td:nth-of-type(odd):hover{
 }
 
 .options{
-    background: rgba(245, 173, 65, 0.966);
+    background-color: rgba(255, 53, 53, 0.966);
 }
