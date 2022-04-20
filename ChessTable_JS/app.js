@@ -49,24 +49,20 @@ class Piece {
     } else {
       console.log("Unknown type", type);
     }
-    //console.log("relativeMoves", relativeMoves);
 
     // Get absolute moves
     let absoluteMoves = [];
     for (let relativeMove of relativeMoves) {
       const absoluteRow = this.row + relativeMove[0];
-      const absoluteCol = this.col + relativeMove[1]; //6+7
-      //console.log(relativeMove[1]);
+      const absoluteCol = this.col + relativeMove[1]; //6+7  
       absoluteMoves.push([absoluteRow, absoluteCol]);
     }
-    //console.log("absoluteMoves", absoluteMoves);
 
     // Get filtered absolute moves
     let filteredMoves = [];
     for (let absoluteMove of absoluteMoves) {
       const absoluteRow = absoluteMove[0];
       const absoluteCol = absoluteMove[1];
-      // console.log(absoluteCol);
       if (
         absoluteRow >= 0 &&
         absoluteRow <= 7 &&
@@ -80,9 +76,8 @@ class Piece {
     return filteredMoves;
   }
 
-  //to do :make relative move absolute
-  //todo: filter out moves that are out of bounds
 
+  //return the pawn moves ,without the move that the piece have another piece in front of him
   getPawnRelativeMoves() {
     let result = [];
     if (this.player == DARK_TYPE) {
@@ -95,7 +90,7 @@ class Piece {
     }
     return result;
   }
-
+  //return the rook moves ,without the move that the piece have another piece in front of him
   getRookRelativeMoves() {
     let result = [];
     let isAfter = true;
@@ -118,7 +113,7 @@ class Piece {
     }
     return result;
   }
-
+  //return the knight moves ,without the move that the piece have another piece in front of him
   getKnightRelativeMoves() {
     let result = [];
     for (let i = -1; i <= 1; i++) {
@@ -135,7 +130,7 @@ class Piece {
     return result;
   }
 
-
+  //return the bishop moves ,without the move that the piece have another piece in front of him
   getBishopRelativeMoves() {
     let isAfter = true;
     let result = [];
@@ -167,7 +162,7 @@ class Piece {
     return result;
   }
 
-
+  //return the king moves ,without the move that the piece have another piece in front of him
   getKingRelativeMoves() {
     let result = [];
     for (let i = -1; i <= 1; i++) {
@@ -183,6 +178,7 @@ class Piece {
     return result;
   }
 
+  //return the queen moves ,without the move that the piece have another piece in front of him
   getQueenRelativeMoves() {
     let result = [];
     for (let i = 1; i < BOARD_SIZE; i++) {
@@ -220,6 +216,7 @@ class BoardData {
     this.pieces = pieces;
   }
 
+  //receive row and col and return the piece that is at this location
   getPiece(row, col) {
     for (let piece of this.pieces) {
       if (piece.row === row && piece.col === col) {
@@ -228,7 +225,7 @@ class BoardData {
     }
   }
 
-  //the function receive new row and col that we want to move to and a piece that we want to move to this location. its return a piece with new location
+  //the function receive new row and col that we want to move to and the piece that we want to move to this location. its return the piece with new location
   movePiece(row, col, piece) {
     if (inRules(piece, row, col)) {
       addImage(table.rows[row].cells[col], piece.player, piece.type, row, col);
@@ -316,8 +313,7 @@ function inRules(actualPiece, row, col) {
 let selectedCell = undefined;
 
 function onCellClick(e, row, col) {
-  //clear previus selected move
-  //console.log(boardData.getPiece(row, col) + " hello");
+  //clear previous selected move
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
       table.rows[i].cells[j].classList.remove("options");
@@ -329,7 +325,6 @@ function onCellClick(e, row, col) {
     getPiece = boardData.getPiece(row, col);
     let possibleMoves = piece.getPossibleMoves();
     for (let possibleMove of possibleMoves) {
-      // console.log(possibleMove);
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       cell.classList.add("options");
     }
@@ -337,27 +332,18 @@ function onCellClick(e, row, col) {
     if (getPiece !== undefined) {
       //receive the selected piece and send it to movepiece that needs to change the place of the piece
       console.log(getPiece);
-      //-----------------------------------------------------
       const pieceSetMovement = boardData.movePiece(row, col, getPiece);
-      //-----------------------------------------------------
-      // console.log(move.pieces.row);
-
       getPiece = undefined;
     }
   }
   let td = document.getElementsByTagName("td");
-  //clear previus selected cell
+  //clear previous selected cell
   if (selectedCell !== undefined) {
     selectedCell.classList.remove("onIt");
   }
   //show selected cell
   selectedCell = e.currentTarget;
-
   selectedCell.classList.add("onIt");
-
-  // table.addEventListener("click", (e) => {
-  //   movePiece();
-  // });
 }
 
 //_____________________________________________________________________________________getInitialPieces
