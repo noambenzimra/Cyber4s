@@ -81,12 +81,27 @@ class Piece {
   getPawnRelativeMoves() {
     let result = [];
     if (this.player == DARK_TYPE) {
-      if (boardData.getPiece(this.row - 1, this.col) === undefined) {
-        result.push([-1, 0]);
+      //console.log((boardData.getPiece(this.row - 1, this.col)) + "helooooooooooooooooooooo");
+      if (boardData.getPiece(this.row - 1, this.col) === undefined || (boardData.getPiece(this.row - 1, this.col).player == WHITE_TYPE)) {
+        if (this.row === 6) {
+          result.push([-1, 0]);
+          result.push([-2, 0]);
+        }
+
+        else {
+          result.push([-1, 0]);
+        }
       }
     }
     else if (boardData.getPiece(this.row + 1, this.col) === undefined) {
-      result.push([1, 0]);
+      if (this.row === 1) {
+        result.push([2, 0]);
+        result.push([1, 0]);
+      }
+      else {
+        result.push([1, 0]);
+      }
+
     }
     return result;
   }
@@ -215,6 +230,10 @@ class BoardData {
   constructor(pieces) {
     this.pieces = pieces;
   }
+  removePiece(row, col) {
+    let piece = this.getPiece(row, col);
+    piece = undefined;
+  }
 
   //receive row and col and return the piece that is at this location
   getPiece(row, col) {
@@ -236,18 +255,14 @@ class BoardData {
         piece.row,
         piece.col
       );
-      //----------------------------------
       piece.setMove(row, col);
       let newLocation = new BoardData(piece);
       return newLocation;
-      //--------------------------------------
-      // }
     }
   }
 
   //check if there is a player in front of the piece and check that the piece dont  go over(מעל שחקן אחר) another player instead of knight
   // freeToRide(player) {
-  //   // console.log(this.pieces);
   //   let row = player.row;
   //   let col = player.col;
   //   if (player.type === ROOK) {
@@ -300,7 +315,6 @@ function removeImage(cell, type, name, row, col) {
 function inRules(actualPiece, row, col) {
   let possibleMoves = [];
   possibleMoves = actualPiece.getPossibleMoves();
-  console.log(possibleMoves);
   // console.log(arr.length);
   for (let i = 0; i < possibleMoves.length; i++) {
     if (possibleMoves[i][0] == row && possibleMoves[i][1] == col) {
@@ -331,7 +345,6 @@ function onCellClick(e, row, col) {
   } else {
     if (getPiece !== undefined) {
       //receive the selected piece and send it to movepiece that needs to change the place of the piece
-      console.log(getPiece);
       const pieceSetMovement = boardData.movePiece(row, col, getPiece);
       getPiece = undefined;
     }
