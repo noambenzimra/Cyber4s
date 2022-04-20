@@ -10,12 +10,11 @@ const KING = "king";
 const QUEEN = "queen";
 
 let table;
-let tblBody;
 let pieces = [];
 let boardData;
-let firstClick = [];
-let secondClick = [];
-let pieceNow = undefined;
+// let firstClick = [];
+// let secondClick = [];
+let getPiece = undefined;
 //___________________________________________________________________________________________________________Class Piece
 
 class Piece {
@@ -31,16 +30,6 @@ class Piece {
     this.col = col;
   }
 
-  //   getPlayer() {
-  //     return this.player;
-  //   }
-
-  //   getRow() {
-  //     return this.row;
-  //   }
-  //   getCol() {
-  //     return this.col;
-  //   }
   getPossibleMoves() {
     // Get relative moves
     let relativeMoves;
@@ -104,11 +93,38 @@ class Piece {
 
   getRookRelativeMoves() {
     let result = [];
+    let isAfter = true;
     for (let i = 1; i < BOARD_SIZE; i++) {
-      result.push([i, 0]);
-      result.push([-i, 0]);
-      result.push([0, i]);
-      result.push([0, -i]);
+      if (boardData.getPiece(i + this.row, this.col) === undefined) {
+        result.push([i, 0]);
+      }
+      // else {
+      //   let frontPiece = boardData.getPiece(i + this.row, this.col);
+      //   let row = frontPiece.row;
+      //   let col = frontPiece.col;
+      //   console.log(frontPiece.row);
+      //   //console.log(result[0]);
+      //   for (let i = 0; i < result.length; i++) {
+      //     let arr = result[i];
+      //     if (arr[0] > row || arr[0] < row)
+      //       //result.splice(i, 0);
+      //       if (arr[1] > col || arr[1] < col) {
+      //         // result.splice(i, 1);
+      //       }
+      //   }
+      // }
+
+      if (boardData.getPiece(-i + this.row, this.col) === undefined) {
+        result.push([-i, 0]);
+      }
+
+      if (boardData.getPiece(this.row, i + this.col) === undefined) {
+        result.push([0, i]);
+      }
+
+      if (boardData.getPiece(this.row, -i + this.col) === undefined) {
+        result.push([0, -i]);
+      }
     }
     return result;
   }
@@ -125,25 +141,46 @@ class Piece {
   }
 
   getBishopRelativeMoves() {
+    let isAfter = true;
     let result = [];
     for (let i = 1; i < BOARD_SIZE; i++) {
-      result.push([i, i]);
-      result.push([i, -i]);
-      result.push([-i, -i]);
-      result.push([-i, i]);
+      if (
+        boardData.getPiece(i + this.row, i + this.col) === undefined &&
+        isAfter === true
+      ) {
+        isAfter = false;
+        console.log(isAfter);
+        result.push([i, i]);
+      }
+      isAfter = true;
+      if (boardData.getPiece(i + this.row, -i + this.col) == undefined) {
+        isAfter = false;
+        result.push([i, -i]);
+      }
+      isAfter = true;
+      if (boardData.getPiece(-i + this.row, -i + this.col) === undefined) {
+        result.push([-i, -i]);
+        isAfter = false;
+      }
+      isAfter = true;
+      if (boardData.getPiece(-i + this.row, i + this.col) === undefined) {
+        result.push([-i, i]);
+      }
     }
+    console.log(result);
     return result;
   }
   getKingRelativeMoves() {
     let result = [];
-    result.push([1, 0]);
-    result.push([-1, 0]);
-    result.push([0, -1]);
-    result.push([0, 1]);
-    result.push([1, 1]);
-    result.push([1, -1]);
-    result.push([-1, 1]);
-    result.push([-1, -1]);
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if ((i !== 0) || (j !== 0)) {
+          //console.log("[" + i + "," + j + "]");
+          if (boardData.getPiece(i + this.row, j + this.col) === undefined)
+            result.push([i, j]);
+        }
+      }
+    }
 
     return result;
   }
@@ -151,14 +188,30 @@ class Piece {
   getQueenRelativeMoves() {
     let result = [];
     for (let i = 1; i < BOARD_SIZE; i++) {
-      result.push([i, 0]);
-      result.push([-i, 0]);
-      result.push([0, i]);
-      result.push([0, -i]);
-      result.push([i, i]);
-      result.push([i, -i]);
-      result.push([-i, -i]);
-      result.push([-i, i]);
+      if (boardData.getPiece(i + this.row, this.col) === undefined) {
+        result.push([i, 0]);
+      }
+      if (boardData.getPiece(-i + this.row, this.col) === undefined) {
+        result.push([-i, 0]);
+      }
+      if (boardData.getPiece(this.row, i + this.col) === undefined) {
+        result.push([0, i]);
+      }
+      if (boardData.getPiece(this.row, -i + this.col) === undefined) {
+        result.push([0, -i]);
+      }
+      if (boardData.getPiece(i + this.row, i + this.col) === undefined) {
+        result.push([i, i]);
+      }
+      if (boardData.getPiece(i + this.row, -i + this.col) === undefined) {
+        result.push([i, -i]);
+      }
+      if (boardData.getPiece(-i + this.row, -i + this.col) === undefined) {
+        result.push([-i, -i]);
+      }
+      if (boardData.getPiece(-i + this.row, i + this.col) === undefined) {
+        result.push([-i, i]);
+      }
     }
     return result;
   }
@@ -177,25 +230,22 @@ class BoardData {
     }
   }
 
-  movePiece(row, col, player) {
-    // console.log(player.getPossibleMoves());
-
-    //console.log(this.freeToRide(player, row, col));
-    if (inRules(player, row, col)) {
+  //the function receive new row and col that we want to move to and a piece that we want to move to this location. its return a piece with new location
+  movePiece(row, col, piece) {
+    if (inRules(piece, row, col)) {
+      addImage(table.rows[row].cells[col], piece.player, piece.type, row, col);
       removeImage(
-        table.rows[player.row].cells[player.col],
-        player.player,
-        player.type,
-        player.row,
-        player.col
+        table.rows[piece.row].cells[piece.col],
+        piece.player,
+        piece.type,
+        piece.row,
+        piece.col
       );
-
-      player.setMove(row, col);
-      let player1 = player;
-      player = new BoardData(player1);
-      //console.log(player);
-      return player;
-
+      //----------------------------------
+      piece.setMove(row, col);
+      let newLocation = new BoardData(piece);
+      return newLocation;
+      //--------------------------------------
       // }
     }
   }
@@ -239,6 +289,7 @@ class BoardData {
 }
 //____________________________________________________________________global function. like-addImage,addimageByIndex,onCellClick
 function addImage(cell, type, name, row, col) {
+  //receive a cell that we want to add the img to,the type of the piece(pawn,king,etc...),the name-"white-type"/"dark-type",row and col (the same of the cell)
   const image = document.createElement("img");
   image.src = "images/" + type + "/" + name + ".svg";
   image.setAttribute("id", row + " " + col);
@@ -246,25 +297,19 @@ function addImage(cell, type, name, row, col) {
 }
 
 function removeImage(cell, type, name, row, col) {
-  //const image = document.createElement("img");
+  //receive the same thing of add img and remove the img from the same cell that it got
   const image = document.getElementById(row + " " + col);
   image.remove();
-
-  // console.log(image);
-  //cell.appendChild(image);
 }
 //check if you can go there(without checking if there is a player in front of you!!!!)
-function inRules(player, row, col) {
-  // let inRules=false;
-  let arr = [];
-  arr = player.getPossibleMoves();
+function inRules(actualPiece, row, col) {
+  let possibleMoves = [];
+  possibleMoves = actualPiece.getPossibleMoves();
+  console.log(possibleMoves);
   // console.log(arr.length);
-  for (let i = 0; i <= arr.length; i++) {
-    for (let j = 0; j <= 2; j++) {
-      //console.log(arr[0][0] + "    " + arr[0][1]);
-      if (arr[i][j] == row && arr[i][j + 1] == col) {
-        return true;
-      }
+  for (let i = 0; i < possibleMoves.length; i++) {
+    if (possibleMoves[i][0] == row && possibleMoves[i][1] == col) {
+      return true;
     }
   }
   return false;
@@ -283,7 +328,7 @@ function onCellClick(e, row, col) {
   //show possible moves
   const piece = boardData.getPiece(row, col);
   if (piece !== undefined) {
-    pieceNow = boardData.getPiece(row, col);
+    getPiece = boardData.getPiece(row, col);
     let possibleMoves = piece.getPossibleMoves();
     for (let possibleMove of possibleMoves) {
       // console.log(possibleMove);
@@ -291,18 +336,15 @@ function onCellClick(e, row, col) {
       cell.classList.add("options");
     }
   } else {
-    if (pieceNow !== undefined) {
-      //console.log(pieceNow);
-      const move = boardData.movePiece(row, col, pieceNow);
+    if (getPiece !== undefined) {
+      //receive the selected piece and send it to movepiece that needs to change the place of the piece
+      console.log(getPiece);
+      //-----------------------------------------------------
+      const pieceSetMovement = boardData.movePiece(row, col, getPiece);
+      //-----------------------------------------------------
       // console.log(move.pieces.row);
-      addImage(
-        table.rows[move.pieces.row].cells[move.pieces.col],
-        move.pieces.player,
-        move.pieces.type,
-        move.pieces.row,
-        move.pieces.col
-      );
-      pieceNow = undefined;
+
+      getPiece = undefined;
     }
   }
   let td = document.getElementsByTagName("td");
@@ -362,20 +404,20 @@ function createChessBoard() {
   table.appendChild(tblBody);
   body.appendChild(table);
 
-  for (let i = 0; i < 8; i++) {
+  for (let row = 0; row < 8; row++) {
     let tr = document.createElement("tr");
     let th = document.createElement("th");
-    let text = document.createTextNode(String.fromCharCode(97 + i));
+    let text = document.createTextNode(String.fromCharCode(97 + row));
     th.appendChild(text);
 
     // tr.appendChild(img.src);
-    for (let j = 0; j < 8; j++) {
+    for (let col = 0; col < 8; col++) {
       let td = document.createElement("td");
       tr.appendChild(td);
       tr.appendChild(th);
       //let x=i,y=j
-      td.setAttribute("id", j);
-      if ((i + j) % 2 == 0) {
+      td.setAttribute("id", col);
+      if ((row + col) % 2 == 0) {
         td.className = "black";
       } else {
         td.className = "white";
@@ -384,7 +426,7 @@ function createChessBoard() {
       //___________________________________________________________________________
       //firstClick = [i, j];
       // console.log(firstClick + "firstClick");
-      td.addEventListener("click", (event) => onCellClick(event, i, j));
+      td.addEventListener("click", (event) => onCellClick(event, row, col));
       //___________________________________________________________________________
     }
     tblBody.appendChild(tr);
@@ -397,6 +439,7 @@ function createChessBoard() {
   boardData = new BoardData(getInitialPieces());
   // console.log(pieces);
   // add images to the board
+
   for (let piece of boardData.pieces) {
     addImage(
       tblBody.rows[piece.row].cells[piece.col],
