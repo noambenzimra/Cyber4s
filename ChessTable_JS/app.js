@@ -1,7 +1,7 @@
 //_________________________________________________________________global variables
 const BOARD_SIZE = 8;
-const WHITE_TYPE = "white";
-const DARK_TYPE = "dark";
+const WHITE_PLAYER = "white";
+const DARK_PLAYER = "dark";
 const PAWN = "pawn";
 const ROOK = "rook";
 const KNIGHT = "knight";
@@ -30,37 +30,43 @@ class Piece {
     this.col = col;
   }
 
-  getPossibleMoves() {
+  getPossibleMoves(boardData) {
     // Get relative moves
-    let relativeMoves;
+    let moves;
     if (this.type === PAWN) {
-      relativeMoves = this.getPawnRelativeMoves();
+      moves = this.getPawnMoves();
     } else if (this.type === ROOK) {
-      relativeMoves = this.getRookRelativeMoves();
+      moves = this.getRookMoves(boardData);
     } else if (this.type === KNIGHT) {
-      relativeMoves = this.getKnightRelativeMoves();
+      moves = this.getKnightMoves(boardData);
     } else if (this.type === BISHOP) {
-      relativeMoves = this.getBishopRelativeMoves();
+      moves = this.getBishopMoves(boardData);
     } else if (this.type === KING) {
       //   console.log(this.getKingRelativeMoves());
-      relativeMoves = this.getKingRelativeMoves();
+      moves = this.getKingMoves(boardData);
     } else if (this.type === QUEEN) {
-      relativeMoves = this.getQueenRelativeMoves();
+      moves = this.getQueenMoves(boardData);
     } else {
       console.log("Unknown type", type);
     }
 
     // Get absolute moves
-    let absoluteMoves = [];
-    for (let relativeMove of relativeMoves) {
-      const absoluteRow = this.row + relativeMove[0];
-      const absoluteCol = this.col + relativeMove[1]; //6+7  
-      absoluteMoves.push([absoluteRow, absoluteCol]);
+    //console.log(moves);
+    if (this.type === PAWN) {
+      let pawnAbsoluteMoves = [];
+      for (let relativeMove of moves) {
+        const absoluteRow = this.row + relativeMove[0];
+        const absoluteCol = this.col + relativeMove[1]; //6+7  
+        pawnAbsoluteMoves.push([absoluteRow, absoluteCol]);
+
+      }
+      moves = pawnAbsoluteMoves;
     }
+
 
     // Get filtered absolute moves
     let filteredMoves = [];
-    for (let absoluteMove of absoluteMoves) {
+    for (let absoluteMove of moves) {
       const absoluteRow = absoluteMove[0];
       const absoluteCol = absoluteMove[1];
       if (
@@ -78,23 +84,39 @@ class Piece {
 
 
   //return the pawn moves ,without the move that the piece have another piece in front of him
-  getPawnRelativeMoves() {
+  getPawnMoves() {
+    //  console.log(boardData);
     let result = [];
-    if (this.player == DARK_TYPE) {
+    if (this.player == DARK_PLAYER) {
       //console.log((boardData.getPiece(this.row - 1, this.col)) + "helooooooooooooooooooooo");
-      if (boardData.getPiece(this.row - 1, this.col) === undefined || (boardData.getPiece(this.row - 1, this.col).player == WHITE_TYPE)) {
+      if (boardData.isEmpty(this.row - 1, this.col) || (boardData.isPlayer(this.row - 1, this.col, WHITE_PLAYER))) {
+        if (boardData.isPlayer(this.row - 1, this.col - 1, WHITE_PLAYER)) {
+          result.push([-1, -1]);
+        }
+        else if (boardData.isPlayer(this.row - 1, this.col + 1, WHITE_PLAYER)) {
+          result.push([-1, +1]);
+        }
+
         if (this.row === 6) {
           result.push([-1, 0]);
           result.push([-2, 0]);
         }
-
         else {
           result.push([-1, 0]);
         }
       }
     }
-    else if (boardData.getPiece(this.row + 1, this.col) === undefined) {
+    //console.log(boardData.isEmpty(this.row + 1, this.col));
+    else if ((boardData.isEmpty(this.row + 1, this.col)) || (boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER))) {
+
+      if (boardData.isPlayer(this.row + 1, this.col - 1, DARK_PLAYER)) {
+        result.push([1, -1]);
+      }
+      else if (boardData.isPlayer(this.row + 1, this.col + 1, DARK_PLAYER)) {
+        result.push([1, 1]);
+      }
       if (this.row === 1) {
+
         result.push([2, 0]);
         result.push([1, 0]);
       }
@@ -106,123 +128,119 @@ class Piece {
     return result;
   }
   //return the rook moves ,without the move that the piece have another piece in front of him
-  getRookRelativeMoves() {
+  // getRookMoves() {
+  //   let result = [];
+  //   let isAfter = true;
+  //   const opponent = this.getOpponent();
+  // //  console.log(opponent);
+  //   for (let i = 1; i < BOARD_SIZE; i++) {
+  //     if (!boardData.isEmpty(i + this.row, this.col)) {
+  //       if (getPiece(i + this.row, this.col).player===this.player) {
+
+  //         break;
+  //       }
+  //       else {
+  //         result.push([i, 0]);
+  //       }
+
+
+  //     }
+
+  //     if (boardData.isEmpty(-i + this.row, this.col)) {
+  //       result.push([-i, 0]);
+  //     }
+
+  //     if (boardData.isEmpty(this.row, i + this.col)) {
+  //       result.push([0, i]);
+  //     }
+
+  //     if (boardData.isEmpty(this.row, -i + this.col)) {
+  //       result.push([0, -i]);
+  //     }
+  //   }
+  //   return result;
+  // }
+  getRookMoves(boardData) {
     let result = [];
-    let isAfter = true;
-    for (let i = 1; i < BOARD_SIZE; i++) {
-      if (boardData.getPiece(i + this.row, this.col) === undefined) {
-        result.push([i, 0]);
-      }
-
-      if (boardData.getPiece(-i + this.row, this.col) === undefined) {
-        result.push([-i, 0]);
-      }
-
-      if (boardData.getPiece(this.row, i + this.col) === undefined) {
-        result.push([0, i]);
-      }
-
-      if (boardData.getPiece(this.row, -i + this.col) === undefined) {
-        result.push([0, -i]);
-      }
-    }
-    return result;
-  }
-  //return the knight moves ,without the move that the piece have another piece in front of him
-  getKnightRelativeMoves() {
-    let result = [];
-    for (let i = -1; i <= 1; i++) {
-      if (i !== 0) {
-        if (boardData.getPiece(this.row + 2, i + this.col) === undefined) {
-          result.push([2, i]);
-        }
-        if (boardData.getPiece(this.row - 2, i + this.col) === undefined) {
-          result.push([-2, i]);
-        }
-      }
-    }
-
-    return result;
-  }
-
-  //return the bishop moves ,without the move that the piece have another piece in front of him
-  getBishopRelativeMoves() {
-    let isAfter = true;
-    let result = [];
-    for (let i = 1; i < BOARD_SIZE; i++) {
-      if (
-        boardData.getPiece(i + this.row, i + this.col) === undefined &&
-        isAfter === true
-      ) {
-        isAfter = false;
-        console.log(isAfter);
-        result.push([i, i]);
-      }
-      isAfter = true;
-      if (boardData.getPiece(i + this.row, -i + this.col) == undefined) {
-        isAfter = false;
-        result.push([i, -i]);
-      }
-      isAfter = true;
-      if (boardData.getPiece(-i + this.row, -i + this.col) === undefined) {
-        result.push([-i, -i]);
-        isAfter = false;
-      }
-      isAfter = true;
-      if (boardData.getPiece(-i + this.row, i + this.col) === undefined) {
-        result.push([-i, i]);
-      }
-    }
+    result = result.concat(this.getMovesInDirection(-1, 0, boardData));
+    result = result.concat(this.getMovesInDirection(1, 0, boardData));
+    result = result.concat(this.getMovesInDirection(0, -1, boardData));
+    result = result.concat(this.getMovesInDirection(0, 1, boardData));
     console.log(result);
     return result;
   }
-
-  //return the king moves ,without the move that the piece have another piece in front of him
-  getKingRelativeMoves() {
+  getMovesInDirection(directionRow, directionCol, boardData) {
     let result = [];
-    for (let i = -1; i <= 1; i++) {
-      for (let j = -1; j <= 1; j++) {
-        if ((i !== 0) || (j !== 0)) {
-          //console.log("[" + i + "," + j + "]");
-          if (boardData.getPiece(i + this.row, j + this.col) === undefined)
-            result.push([i, j]);
-        }
+    for (let i = 1; i < BOARD_SIZE; i++) {
+      let row = this.row + directionRow * i;
+      let col = this.col + directionCol * i;
+      //  console.log(boardData.isEmpty(row, col));
+      if (boardData.isEmpty(row, col)) {
+        result.push([row, col]);
+      } else if (boardData.isPlayer(row, col, this.getOpponent())) {
+        result.push([row, col]);
+        console.log("opponent");
+        return result;
+      }
+      else if (boardData.isPlayer(row, col, this.player)) {
+        console.log("player");
+        return result;
       }
     }
+    // console.log("all empty");
+    return result;
+  }
+  //return the knight moves
+  getKnightMoves(boardData) {
+    let result = [];
+    const relativeMoves = [[2, 1], [2, -1], [-2, 1], [-2, -1], [-1, 2], [1, 2], [-1, -2], [1, -2]];
+    for (let relativeMove of relativeMoves) {
+      let row = this.row + relativeMove[0];
+      let col = this.col + relativeMove[1];
+      if (!boardData.isPlayer(row, col, this.player))//if there is not a player or its an opponent player go in
+      {
+        result.push([row, col]);
+      }
+    }
+    return result;
+  }
 
+
+  //return the bishop moves ,without the move that the piece have another piece in front of him
+  getBishopMoves() {
+    let result = [];
+    result = result.concat(this.getMovesInDirection(-1, -1, boardData));
+    result = result.concat(this.getMovesInDirection(-1, 1, boardData));
+    result = result.concat(this.getMovesInDirection(1, -1, boardData));
+    result = result.concat(this.getMovesInDirection(1, 1, boardData));
+    return result;
+  }
+  //return the king moves
+  getKingMoves() {
+    let result = [];
+    const relativeMoves = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+    for (let relativeMove of relativeMoves) {
+      let row = this.row + relativeMove[0];
+      let col = this.col + relativeMove[1];
+      if (!boardData.isPlayer(row, col, this.player)) {//if there is not a player or its an opponent player go in
+        result.push([row, col]);
+      }
+    }
     return result;
   }
 
   //return the queen moves ,without the move that the piece have another piece in front of him
-  getQueenRelativeMoves() {
-    let result = [];
-    for (let i = 1; i < BOARD_SIZE; i++) {
-      if (boardData.getPiece(i + this.row, this.col) === undefined) {
-        result.push([i, 0]);
-      }
-      if (boardData.getPiece(-i + this.row, this.col) === undefined) {
-        result.push([-i, 0]);
-      }
-      if (boardData.getPiece(this.row, i + this.col) === undefined) {
-        result.push([0, i]);
-      }
-      if (boardData.getPiece(this.row, -i + this.col) === undefined) {
-        result.push([0, -i]);
-      }
-      if (boardData.getPiece(i + this.row, i + this.col) === undefined) {
-        result.push([i, i]);
-      }
-      if (boardData.getPiece(i + this.row, -i + this.col) === undefined) {
-        result.push([i, -i]);
-      }
-      if (boardData.getPiece(-i + this.row, -i + this.col) === undefined) {
-        result.push([-i, -i]);
-      }
-      if (boardData.getPiece(-i + this.row, i + this.col) === undefined) {
-        result.push([-i, i]);
-      }
-    }
+  getQueenMoves(boardData) {
+    let result = this.getBishopMoves(boardData);
+    result = result.concat(this.getRookMoves(boardData));
     return result;
+  }
+
+  getOpponent() {
+    if (this.player === WHITE_PLAYER) {
+      return DARK_PLAYER;
+    }
+    return WHITE_PLAYER;
   }
 }
 //________________________________________________________________________________________________________Class BoardData
@@ -244,6 +262,15 @@ class BoardData {
     }
   }
 
+  isEmpty(row, col) {
+    return this.getPiece(row, col) === undefined;
+  }
+
+  isPlayer(row, col, player) {
+    const piece = this.getPiece(row, col);
+    return piece != undefined && piece.player === player;
+  }
+
   //the function receive new row and col that we want to move to and the piece that we want to move to this location. its return the piece with new location
   movePiece(row, col, piece) {
     if (inRules(piece, row, col)) {
@@ -260,6 +287,9 @@ class BoardData {
       return newLocation;
     }
   }
+
+
+
 
   //check if there is a player in front of the piece and check that the piece dont  go over(מעל שחקן אחר) another player instead of knight
   // freeToRide(player) {
@@ -314,7 +344,7 @@ function removeImage(cell, type, name, row, col) {
 //check if you can go there(without checking if there is a player in front of you!!!!)
 function inRules(actualPiece, row, col) {
   let possibleMoves = [];
-  possibleMoves = actualPiece.getPossibleMoves();
+  possibleMoves = actualPiece.getPossibleMoves(boardData);
   // console.log(arr.length);
   for (let i = 0; i < possibleMoves.length; i++) {
     if (possibleMoves[i][0] == row && possibleMoves[i][1] == col) {
@@ -337,7 +367,7 @@ function onCellClick(e, row, col) {
   const piece = boardData.getPiece(row, col);
   if (piece !== undefined) {
     getPiece = boardData.getPiece(row, col);
-    let possibleMoves = piece.getPossibleMoves();
+    let possibleMoves = piece.getPossibleMoves(boardData);
     for (let possibleMove of possibleMoves) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       cell.classList.add("options");
@@ -364,11 +394,11 @@ function getInitialPieces() {
   let result = [];
 
   //addFirstRowPieces();
-  addFirstRowPieces(result, 0, WHITE_TYPE);
-  addFirstRowPieces(result, 7, DARK_TYPE);
+  addFirstRowPieces(result, 0, WHITE_PLAYER);
+  addFirstRowPieces(result, 7, DARK_PLAYER);
   for (let i = 0; i < 8; i++) {
-    result.push(new Piece(1, i, "pawn", WHITE_TYPE));
-    result.push(new Piece(6, i, "pawn", DARK_TYPE));
+    result.push(new Piece(1, i, "pawn", WHITE_PLAYER));
+    result.push(new Piece(6, i, "pawn", DARK_PLAYER));
   }
   return result;
 }
@@ -434,7 +464,7 @@ function createChessBoard() {
 
   //pieces = getInitialPieces();
   boardData = new BoardData(getInitialPieces());
-  // console.log(pieces);
+  console.log(boardData);
   // add images to the board
 
   for (let piece of boardData.pieces) {

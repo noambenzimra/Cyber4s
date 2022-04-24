@@ -1,58 +1,59 @@
-body{
-    margin:0%;
-    
+body {
+    margin: 0%;
+
 }
 
 
-h1{
+h1 {
     margin-left: 30%;
-    
-   color: #441a03;
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
-    
+
+    color: #441a03;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
 }
 
-table{
+table {
     /* table-layout: fixed; */
-    margin-top: 0%;
+    margin: auto;
     width: 50%;
     height: 40%;
     border: 49px solid #462921;
-    border-collapse:separate;
-    
-    margin :5% 10% 10% 10%
+    border-collapse: separate;
+
+    margin: 5% 10% 10% 10%
 }
 
-th{
-    background:#7d694c;
+th {
+    background: #7d694c;
 }
 
-tr,td{
+tr,
+td {
     border: 1px solid black;
 }
-td{
+
+td {
     /* text-align: left; */
     height: 80px;
-    
-    
-    
+
+
+
 }
 
-.black{
-    background-color:#725122;
+.black {
+    background-color: #725122;
     text-align: center;
     vertical-align: middle;
-    
-    
+
+
 }
 
-.white{
+.white {
     background-color: #b5915f;
     text-align: center;
     vertical-align: middle;
 }
 
-td:hover{
+td:hover {
     background-color: rgba(0, 0, 0, 0.171);
 }
 
@@ -60,18 +61,18 @@ td:hover{
     background-color:#440303;
 }   */
 
-tr:nth-of-type(even) td:nth-of-type(even):hover{
-    background-color:#72512267
-}
-tr:nth-of-type(odd) td:nth-of-type(odd):hover{
-    background-color:#72512267
-
+tr:nth-of-type(even) td:nth-of-type(even):hover {
+    background-color: #72512267
 }
 
-.onIt{
+tr:nth-of-type(odd) td:nth-of-type(odd):hover {
+    background-color: #72512267
+}
+
+.onIt {
     background: rgba(252, 151, 0, 0.966);
 }
 
-.options{
+.options {
     background-color: rgba(255, 53, 53, 0.966);
 }
