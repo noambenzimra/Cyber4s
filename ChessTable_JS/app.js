@@ -25,6 +25,10 @@ class Piece {
     this.player = player;
   }
 
+  getPlayer() {
+    return this.player;
+  }
+
   setMove(row, col) {
     this.row = row;
     this.col = col;
@@ -127,36 +131,68 @@ class Piece {
     }
     return result;
   }
-  //return the rook moves ,without the move that the piece have another piece in front of him
+  // return the rook moves ,without the move that the piece have another piece in front of him
   // getRookMoves() {
   //   let result = [];
-  //   let isAfter = true;
+  //   //   let isAfter = true;
   //   const opponent = this.getOpponent();
-  // //  console.log(opponent);
+  //   //  console.log(opponent);
   //   for (let i = 1; i < BOARD_SIZE; i++) {
-  //     if (!boardData.isEmpty(i + this.row, this.col)) {
-  //       if (getPiece(i + this.row, this.col).player===this.player) {
-
+  //     if (boardData.isEmpty(i + this.row, this.col)) {
+  //       result.push([i, 0]);
+  //     }
+  //     else {
+  //       if (boardData.isPlayer(i + this.row, this.col, this.getOpponent())) {
+  //         result.push([i, 0]);
   //         break;
   //       }
-  //       else {
-  //         result.push([i, 0]);
+  //       else if (boardData.isPlayer(i + this.row, this.col, this.player)) {
+  //         break;
   //       }
-
-
   //     }
-
   //     if (boardData.isEmpty(-i + this.row, this.col)) {
+
   //       result.push([-i, 0]);
   //     }
+  //     else {
+  //       //  console.log("halooooooooooooooooooooo2");
+  //       if (boardData.isPlayer(-i + this.row, this.col, this.getOpponent())) {
 
+  //         result.push([-i, 0]);
+  //         break;
+  //       }
+  //       if (boardData.isPlayer(-i + this.row, this.col, this.player)) {
+  //         // console.log(boardData.isPlayer(-i + this.row, this.col, this.player));
+  //         break;
+  //       }
+  //     }
   //     if (boardData.isEmpty(this.row, i + this.col)) {
   //       result.push([0, i]);
   //     }
+  //     else {
+  //       if (boardData.isPlayer(this.row, this.col + i, this.getOpponent())) {
+  //         result.push([0, i]);
+  //         break;
+  //       }
+  //       if (boardData.isPlayer(this.row, i + this.col, this.player)) {
+  //         break;
+  //       }
+  //     }
 
   //     if (boardData.isEmpty(this.row, -i + this.col)) {
+  //       console.log("empty");
   //       result.push([0, -i]);
   //     }
+  //     else {
+  //       if (boardData.isPlayer(this.row, -i + this.col, this.getOpponent())) {
+  //         result.push([0, -i]);
+  //         break;
+  //       }
+  //       if (boardData.isPlayer(this.row, -i + this.col, this.player)) {
+  //         break;
+  //       }
+  //     }
+
   //   }
   //   return result;
   // }
@@ -166,7 +202,6 @@ class Piece {
     result = result.concat(this.getMovesInDirection(1, 0, boardData));
     result = result.concat(this.getMovesInDirection(0, -1, boardData));
     result = result.concat(this.getMovesInDirection(0, 1, boardData));
-    console.log(result);
     return result;
   }
   getMovesInDirection(directionRow, directionCol, boardData) {
@@ -174,26 +209,27 @@ class Piece {
     for (let i = 1; i < BOARD_SIZE; i++) {
       let row = this.row + directionRow * i;
       let col = this.col + directionCol * i;
-      //  console.log(boardData.isEmpty(row, col));
       if (boardData.isEmpty(row, col)) {
         result.push([row, col]);
       } else if (boardData.isPlayer(row, col, this.getOpponent())) {
         result.push([row, col]);
-        console.log("opponent");
         return result;
       }
       else if (boardData.isPlayer(row, col, this.player)) {
-        console.log("player");
         return result;
       }
     }
-    // console.log("all empty");
     return result;
   }
   //return the knight moves
   getKnightMoves(boardData) {
     let result = [];
     const relativeMoves = [[2, 1], [2, -1], [-2, 1], [-2, -1], [-1, 2], [1, 2], [-1, -2], [1, -2]];
+    for (let i = -2; i < 3; i++) {
+      for (let j = -2; j < 3; j++) {
+        relativeMoves.push([])
+      }
+    }
     for (let relativeMove of relativeMoves) {
       let row = this.row + relativeMove[0];
       let col = this.col + relativeMove[1];
@@ -242,6 +278,12 @@ class Piece {
     }
     return WHITE_PLAYER;
   }
+  getRow() {
+    return this.row;
+  }
+  getCol() {
+    return this.col;
+  }
 }
 //________________________________________________________________________________________________________Class BoardData
 class BoardData {
@@ -272,8 +314,21 @@ class BoardData {
   }
 
   //the function receive new row and col that we want to move to and the piece that we want to move to this location. its return the piece with new location
-  movePiece(row, col, piece) {
+  movePiece(row, col, piece, potentialEat) {
+
     if (inRules(piece, row, col)) {
+      // console.log(piece.getOpponent());
+      // console.log(potentialEat);
+      for (let eat of potentialEat) {
+
+        let opponentPiece = this.getPiece(eat[row], eat[col]);
+
+        if (opponentPiece !== undefined && piece.getOpponent() === opponentPiece.player) {
+          console.log("hollaaaaaaaaaaaaaa");
+          this.eat(potentialEat[0], potentialEat[1], piece)
+        }
+      }
+
       addImage(table.rows[row].cells[col], piece.player, piece.type, row, col);
       removeImage(
         table.rows[piece.row].cells[piece.col],
@@ -288,44 +343,50 @@ class BoardData {
     }
   }
 
+  //list that get a list of possible moves and return a list of opponent moves
+  oponnentList(possibleMoves) {
+    let result = []
+    let player = ""
+    let counter = 0;
+    for (let possiblemove of possibleMoves) {
+      let piece = this.getPiece(possiblemove[0], possiblemove[1])
+      if (piece !== undefined) {
+        if (piece.getPlayer() === WHITE_PLAYER) {
+          player = WHITE_PLAYER;
+          // console.log("white");
+        }
+        else {
+          player = DARK_PLAYER;
+          // console.log("dark");
+        }
+        if (piece.getOpponent() !== player) {
+          counter++;
+          result.push([piece])
+        }
+      }
+    }
+    if (counter !== 0) {
+
+      //console.log(result);
+      return result;
+    }
+    return 0;
+
+  }
 
 
 
-  //check if there is a player in front of the piece and check that the piece dont  go over(מעל שחקן אחר) another player instead of knight
-  // freeToRide(player) {
-  //   let row = player.row;
-  //   let col = player.col;
-  //   if (player.type === ROOK) {
-  //     for (let piece of this.pieces) {
-  //       //  console.log(piece.row);
+  eat(row, col, piece) {
+    const actualPiece = this.getPiece(row, col)
 
-  //       if (piece.row === row || piece.col === col) {
-  //         for (let i = 7; i > 0; i--) {
-  //           if (
-  //             this.getPiece(row, i) !== undefined &&
-  //             player !== this.getPiece(row, i)
-  //           ) {
-  //             return false;
-  //           }
-  //         }
-  //       }
-  //       return true;
-  //     }
-  //   }
+    removeImage(table.rows[row].cells[col], actualPiece.player, actualPiece.type, row, col);
+    addImage(table.rows[row].cells[col], piece.player, piece.type, piece.getRow(), piece.getCol());
+    removeImage(table.rows[piece.getRow()].cells[piece.getCol()], piece.player, piece.type, piece.getRow(), piece.getCol());
+    piece.setMove(row, col);
+    let newLocation = new BoardData(piece);
 
-  //   if (player.type === BISHOP) {
-  //     for (let piece of this.pieces) {
-  //       if (
-  //         this.getPiece(row + 1, col + 1) !== undefined ||
-  //         this.getPiece(row - 1, col + 1) !== undefined ||
-  //         this.getPiece(row + 1, col - 1) !== undefined ||
-  //         this.getPiece(row - 1, col - 1) !== undefined
-  //       ) {
-  //         return false;
-  //       } else return true;
-  //     }
-  //   }
-  // }
+    return newLocation;
+  }
 }
 //____________________________________________________________________global function. like-addImage,addimageByIndex,onCellClick
 function addImage(cell, type, name, row, col) {
@@ -341,7 +402,7 @@ function removeImage(cell, type, name, row, col) {
   const image = document.getElementById(row + " " + col);
   image.remove();
 }
-//check if you can go there(without checking if there is a player in front of you!!!!)
+//check if you can go there
 function inRules(actualPiece, row, col) {
   let possibleMoves = [];
   possibleMoves = actualPiece.getPossibleMoves(boardData);
@@ -358,27 +419,67 @@ let selectedCell = undefined;
 
 function onCellClick(e, row, col) {
   //clear previous selected move
+  let opponentMoves = []
+  let rowList = []
+  let colList = []
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
       table.rows[i].cells[j].classList.remove("options");
     }
   }
   //show possible moves
+  let potentialEat = [];
   const piece = boardData.getPiece(row, col);
+  let actualPiece = boardData.getPiece(row, col);
   if (piece !== undefined) {
     getPiece = boardData.getPiece(row, col);
     let possibleMoves = piece.getPossibleMoves(boardData);
+    opponentMoves = boardData.oponnentList(possibleMoves);
     for (let possibleMove of possibleMoves) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       cell.classList.add("options");
-    }
-  } else {
-    if (getPiece !== undefined) {
-      //receive the selected piece and send it to movepiece that needs to change the place of the piece
-      const pieceSetMovement = boardData.movePiece(row, col, getPiece);
-      getPiece = undefined;
+      // console.log(possibleMove[0]);
+      // let opponentPiece = boardData.getPiece(possibleMove[0], possibleMove[1])
+      // if (opponentPiece !== undefined && piece.getOpponent() === opponentPiece.player) {
+      //   // boardData.eat(possibleMove[0], possibleMove[1], getPiece);
+      //   potentialEat.push([opponentPiece]);
+
+      // }
+      if (opponentMoves !== 0) {
+        for (let opponentMove of opponentMoves) {
+          rowList.push(opponentMove[[0]].getRow());
+          colList.push(opponentMove[[0]].getCol());
+          //boardData.movePiece(row, col, getPiece, potentialEat);
+        }
+      }
     }
   }
+
+  else {
+    console.log(rowList.length);
+    for (let i = 0; i < rowList.length; i++) {
+      console.log(row + "  " + rowList[i] + "   " + col + "   " + colList[i]);
+      if (row === rowList[i] && col === colList[i]) {
+        console.log("chicos");
+        boardData.eat(row, col, boardData, getPiece(rowList[i], colList[i]))
+        //TODO:erase the opponent player
+      }
+    }
+
+    if (getPiece !== undefined) {//remember the place after the click !!!!!!!!!!!!this remember only after you click on someone else!!!!!!!!!
+
+      //  console.log("chicos1");
+
+    }
+    //receive the selected piece and send it to movepiece that needs to change the place of the piece
+    const pieceSetMovement = boardData.movePiece(row, col, getPiece, potentialEat);
+
+    getPiece = undefined;
+
+  }
+
+
+
   let td = document.getElementsByTagName("td");
   //clear previous selected cell
   if (selectedCell !== undefined) {

@@ -1,5 +1,5 @@
 body {
-    margin: 0%;
+    text-align: center;
 
 }
 
@@ -13,7 +13,7 @@ h1 {
 
 table {
     /* table-layout: fixed; */
-    margin: auto;
+    margin: 0 auto;
     width: 50%;
     height: 40%;
     border: 49px solid #462921;
@@ -74,5 +74,5 @@ tr:nth-of-type(odd) td:nth-of-type(odd):hover {
 }
 
 .options {
-    background-color: rgba(255, 53, 53, 0.966);
+    background-color: rgba(59, 194, 47, 0.705);
 }
