@@ -13,8 +13,6 @@ let table;
 let pieces = [];
 let boardData;
 let selectedPiece;
-// let firstClick = [];
-// let secondClick = [];
 let getPiece = undefined;
 //___________________________________________________________________________________________________________Class Piece
 
@@ -226,6 +224,14 @@ class Piece {
 class BoardData {
   constructor(pieces) {
     this.pieces = pieces;
+    this.turn = 0;
+
+  }
+  getTurn() {
+    if (this.turn % 2 == 0) {
+      return DARK_PLAYER;
+    }
+    return WHITE_PLAYER;
   }
 
   //receive row and col and return the piece that is at this location
@@ -248,29 +254,29 @@ class BoardData {
 
   //the function receive new row and col that we want to move to and the piece that we want to move to this location. its return true or false if the piece has moved
   movePiece(row, col, piece) {
-
     if (inRules(row, col, piece)) {
-      this.removePiece(row, col);
-      piece.row = row;
-      piece.col = col;
+      if (this.getTurn() === piece.getPlayer()) {
+        this.removePiece(row, col);
+        piece.row = row;
+        piece.col = col;
+        this.turn++;
+        return true;
+      }
 
-      // piece.setMove(row, col);
-      //let newLocation = new BoardData(piece);
-      return true;
     }
     return false;
   }
-
   removePiece(row, col) {
     for (let i = 0; i < this.pieces.length; i++) {
       const piece = this.pieces[i];
       if (piece.row === row && piece.col === col) {
         // Remove piece at index i
+        const cell = table.rows[row].cells[col];
+        cell.classList.add('beforeEat');
         this.pieces.splice(i, 1);
       }
     }
   }
-
 }
 //____________________________________________________________________global function. like-addImage,addimageByIndex,onCellClick
 function addImage(cell, type, name, row, col) {
@@ -294,12 +300,7 @@ function inRules(row, col, piece) {
 }
 let selectedCell = undefined;
 
-function eatOpponnent(e, row, col, piece) {
-  boardData.eat(row, col, piece);
-}
-
 function tryUpdateSelectedPiece(row, col) {
-  console.log('showMovesForPiece');
   // Clear all previous possible moves
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
@@ -307,17 +308,15 @@ function tryUpdateSelectedPiece(row, col) {
       table.rows[i].cells[j].classList.remove('onIt');
     }
   }
-
   // Show possible moves
   const piece = boardData.getPiece(row, col);
-  if (piece !== undefined) {
+  if (piece !== undefined && boardData.getTurn() === piece.getPlayer()) {
     let possibleMoves = piece.getPossibleMoves(boardData);
     for (let possibleMove of possibleMoves) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       cell.classList.add('options');
     }
   }
-
   table.rows[row].cells[col].classList.add('onIt');
   selectedPiece = piece;
 }
@@ -332,10 +331,8 @@ function onCellClick(e, row, col) {
   // row, col - the currently clicked cell - it may be empty, or have a piece.
   if (selectedPiece !== undefined && boardData.movePiece(row, col, selectedPiece)) {
     selectedPiece = undefined;
-
     // Recreate whole board - this is not efficient, but doesn't affect user experience
     createChessBoard(boardData);
-    console.log("created");
   }
   else {
     tryUpdateSelectedPiece(row, col);
@@ -430,9 +427,6 @@ function createChessBoard(boardData) {
 
   table.setAttribute("border", "4");
 
-  //pieces = getInitialPieces();
-
-  console.log(boardData);
   // add images to the board
   for (let piece of boardData.pieces) {
     addImage(

@@ -76,6 +76,10 @@ tr:nth-of-type(odd) td:nth-of-type(odd):hover {
     box-shadow: inset 0 0 40px rgba(59, 194, 47, 0.705);
 }
 
+.beforeEat {
+    box-shadow: inset 0 0 40px red;
+}
+
 @media only screen and (max-width:500px) {
     table {
         width: 40%;
