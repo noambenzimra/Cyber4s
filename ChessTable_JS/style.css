@@ -18,7 +18,6 @@ table {
     height: 40%;
     border: 29px solid #462921;
     border-collapse: separate;
-
     margin: 5% 10% 10% 10%
 }
 
@@ -70,19 +69,14 @@ tr:nth-of-type(odd) td:nth-of-type(odd):hover {
 }
 
 .onIt {
-    background: rgba(252, 151, 0, 0.966);
+    box-shadow: inset 0 0 40px rgba(252, 151, 0, 0.966);
 }
 
 .options {
-    background-color: rgba(59, 194, 47, 0.705);
+    box-shadow: inset 0 0 40px rgba(59, 194, 47, 0.705);
 }
 
 @media only screen and (max-width:500px) {
-    /* tr {
-        width: 40px;
-        height: 40px;
-    } */
-
     table {
         width: 40%;
         height: 40%;
