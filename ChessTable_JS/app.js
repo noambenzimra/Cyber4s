@@ -314,20 +314,20 @@ class BoardData {
   }
 
   //the function receive new row and col that we want to move to and the piece that we want to move to this location. its return the piece with new location
-  movePiece(row, col, piece, potentialEat) {
+  movePiece(row, col, piece) {
 
     if (inRules(piece, row, col)) {
       // console.log(piece.getOpponent());
       // console.log(potentialEat);
-      for (let eat of potentialEat) {
+      // for (let eat of potentialEat) {
 
-        let opponentPiece = this.getPiece(eat[row], eat[col]);
+      //   let opponentPiece = this.getPiece(eat[row], eat[col]);
 
-        if (opponentPiece !== undefined && piece.getOpponent() === opponentPiece.player) {
-          console.log("hollaaaaaaaaaaaaaa");
-          this.eat(potentialEat[0], potentialEat[1], piece)
-        }
-      }
+      //   if (opponentPiece !== undefined && piece.getOpponent() === opponentPiece.player) {
+      //     console.log("hollaaaaaaaaaaaaaa");
+      //     this.eat(potentialEat[0], potentialEat[1], piece)
+      //   }
+      // }
 
       addImage(table.rows[row].cells[col], piece.player, piece.type, row, col);
       removeImage(
@@ -377,15 +377,25 @@ class BoardData {
 
 
   eat(row, col, piece) {
-    const actualPiece = this.getPiece(row, col)
+    let i = 0;
+    if (i < 1) {
+      const actualPiece = this.getPiece(row, col)
+      console.log(actualPiece);
+      removeImage(table.rows[row].cells[col], actualPiece.player, actualPiece.type, row, col);
+      console.log("image removed");
+      // this.movePiece(row, col, piece)
+      addImage(table.rows[row].cells[col], piece.player, piece.type, row, col);
+      console.log("image added");
+      removeImage(table.rows[piece.getRow()].cells[piece.getCol()], piece.player, piece.type, piece.getRow(), piece.getCol());
+      console.log("image removed2");
+      piece.setMove(row, col);
+      console.log("set");
+      let newLocation = new BoardData(piece);
+      // i++;
+      // return newLocation;
 
-    removeImage(table.rows[row].cells[col], actualPiece.player, actualPiece.type, row, col);
-    addImage(table.rows[row].cells[col], piece.player, piece.type, piece.getRow(), piece.getCol());
-    removeImage(table.rows[piece.getRow()].cells[piece.getCol()], piece.player, piece.type, piece.getRow(), piece.getCol());
-    piece.setMove(row, col);
-    let newLocation = new BoardData(piece);
+    }
 
-    return newLocation;
   }
 }
 //____________________________________________________________________global function. like-addImage,addimageByIndex,onCellClick
@@ -417,6 +427,12 @@ function inRules(actualPiece, row, col) {
 
 let selectedCell = undefined;
 
+function eatOpponnent(e, row, col, piece) {
+  //const opponnent =boardData.getPiece(row,col);
+  boardData.eat(row, col, piece);
+
+}
+
 function onCellClick(e, row, col) {
   //clear previous selected move
   let opponentMoves = []
@@ -428,7 +444,6 @@ function onCellClick(e, row, col) {
     }
   }
   //show possible moves
-  let potentialEat = [];
   const piece = boardData.getPiece(row, col);
   let actualPiece = boardData.getPiece(row, col);
   if (piece !== undefined) {
@@ -438,43 +453,41 @@ function onCellClick(e, row, col) {
     for (let possibleMove of possibleMoves) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       cell.classList.add("options");
-      // console.log(possibleMove[0]);
-      // let opponentPiece = boardData.getPiece(possibleMove[0], possibleMove[1])
-      // if (opponentPiece !== undefined && piece.getOpponent() === opponentPiece.player) {
-      //   // boardData.eat(possibleMove[0], possibleMove[1], getPiece);
-      //   potentialEat.push([opponentPiece]);
 
-      // }
       if (opponentMoves !== 0) {
         for (let opponentMove of opponentMoves) {
           rowList.push(opponentMove[[0]].getRow());
           colList.push(opponentMove[[0]].getCol());
-          //boardData.movePiece(row, col, getPiece, potentialEat);
+          table.rows[opponentMove[[0]].getRow()].cells[opponentMove[[0]].getCol()].addEventListener("click", (event) => eatOpponnent(event, opponentMove[[0]].getRow(), opponentMove[[0]].getCol(), piece))
+          opponentMoves = [];
         }
       }
     }
   }
 
   else {
-    console.log(rowList.length);
-    for (let i = 0; i < rowList.length; i++) {
-      console.log(row + "  " + rowList[i] + "   " + col + "   " + colList[i]);
-      if (row === rowList[i] && col === colList[i]) {
-        console.log("chicos");
-        boardData.eat(row, col, boardData, getPiece(rowList[i], colList[i]))
-        //TODO:erase the opponent player
-      }
-    }
+    // console.log(rowList.length);
+    // // td.addEventListener("click", (event) => onCellClick(event, row, col));
+
+    // for (let i = 0; i < rowList.length; i++) {
+    //   console.log(row + "  " + rowList[i] + "   " + col + "   " + colList[i]);
+    //   if (row === rowList[i] && col === colList[i]) {
+    //     console.log("chicos");
+    //     boardData.eat(row, col, boardData, getPiece(rowList[i], colList[i]))
+    //TODO:erase the opponent player
+    // }
+
 
     if (getPiece !== undefined) {//remember the place after the click !!!!!!!!!!!!this remember only after you click on someone else!!!!!!!!!
 
       //  console.log("chicos1");
+      const pieceSetMovement = boardData.movePiece(row, col, getPiece);
 
+      getPiece = undefined;
     }
     //receive the selected piece and send it to movepiece that needs to change the place of the piece
-    const pieceSetMovement = boardData.movePiece(row, col, getPiece, potentialEat);
 
-    getPiece = undefined;
+
 
   }
 
