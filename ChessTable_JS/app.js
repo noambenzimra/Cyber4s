@@ -8,10 +8,11 @@ const KNIGHT = "knight";
 const BISHOP = "bishop";
 const KING = "king";
 const QUEEN = "queen";
-
+const CHESS_BOARD_ID = 'chess-board';
 let table;
 let pieces = [];
 let boardData;
+let selectedPiece;
 // let firstClick = [];
 // let secondClick = [];
 let getPiece = undefined;
@@ -131,71 +132,7 @@ class Piece {
     }
     return result;
   }
-  // return the rook moves ,without the move that the piece have another piece in front of him
-  // getRookMoves() {
-  //   let result = [];
-  //   //   let isAfter = true;
-  //   const opponent = this.getOpponent();
-  //   //  console.log(opponent);
-  //   for (let i = 1; i < BOARD_SIZE; i++) {
-  //     if (boardData.isEmpty(i + this.row, this.col)) {
-  //       result.push([i, 0]);
-  //     }
-  //     else {
-  //       if (boardData.isPlayer(i + this.row, this.col, this.getOpponent())) {
-  //         result.push([i, 0]);
-  //         break;
-  //       }
-  //       else if (boardData.isPlayer(i + this.row, this.col, this.player)) {
-  //         break;
-  //       }
-  //     }
-  //     if (boardData.isEmpty(-i + this.row, this.col)) {
 
-  //       result.push([-i, 0]);
-  //     }
-  //     else {
-  //       //  console.log("halooooooooooooooooooooo2");
-  //       if (boardData.isPlayer(-i + this.row, this.col, this.getOpponent())) {
-
-  //         result.push([-i, 0]);
-  //         break;
-  //       }
-  //       if (boardData.isPlayer(-i + this.row, this.col, this.player)) {
-  //         // console.log(boardData.isPlayer(-i + this.row, this.col, this.player));
-  //         break;
-  //       }
-  //     }
-  //     if (boardData.isEmpty(this.row, i + this.col)) {
-  //       result.push([0, i]);
-  //     }
-  //     else {
-  //       if (boardData.isPlayer(this.row, this.col + i, this.getOpponent())) {
-  //         result.push([0, i]);
-  //         break;
-  //       }
-  //       if (boardData.isPlayer(this.row, i + this.col, this.player)) {
-  //         break;
-  //       }
-  //     }
-
-  //     if (boardData.isEmpty(this.row, -i + this.col)) {
-  //       console.log("empty");
-  //       result.push([0, -i]);
-  //     }
-  //     else {
-  //       if (boardData.isPlayer(this.row, -i + this.col, this.getOpponent())) {
-  //         result.push([0, -i]);
-  //         break;
-  //       }
-  //       if (boardData.isPlayer(this.row, -i + this.col, this.player)) {
-  //         break;
-  //       }
-  //     }
-
-  //   }
-  //   return result;
-  // }
   getRookMoves(boardData) {
     let result = [];
     result = result.concat(this.getMovesInDirection(-1, 0, boardData));
@@ -290,10 +227,6 @@ class BoardData {
   constructor(pieces) {
     this.pieces = pieces;
   }
-  removePiece(row, col) {
-    let piece = this.getPiece(row, col);
-    piece = undefined;
-  }
 
   //receive row and col and return the piece that is at this location
   getPiece(row, col) {
@@ -313,34 +246,19 @@ class BoardData {
     return piece != undefined && piece.player === player;
   }
 
-  //the function receive new row and col that we want to move to and the piece that we want to move to this location. its return the piece with new location
+  //the function receive new row and col that we want to move to and the piece that we want to move to this location. its return true or false if the piece has moved
   movePiece(row, col, piece) {
 
-    if (inRules(piece, row, col)) {
-      // console.log(piece.getOpponent());
-      // console.log(potentialEat);
-      // for (let eat of potentialEat) {
+    if (inRules(row, col, piece)) {
+      this.removePiece(row, col);
+      piece.row = row;
+      piece.col = col;
 
-      //   let opponentPiece = this.getPiece(eat[row], eat[col]);
-
-      //   if (opponentPiece !== undefined && piece.getOpponent() === opponentPiece.player) {
-      //     console.log("hollaaaaaaaaaaaaaa");
-      //     this.eat(potentialEat[0], potentialEat[1], piece)
-      //   }
-      // }
-
-      addImage(table.rows[row].cells[col], piece.player, piece.type, row, col);
-      removeImage(
-        table.rows[piece.row].cells[piece.col],
-        piece.player,
-        piece.type,
-        piece.row,
-        piece.col
-      );
-      piece.setMove(row, col);
-      let newLocation = new BoardData(piece);
-      return newLocation;
+      // piece.setMove(row, col);
+      //let newLocation = new BoardData(piece);
+      return true;
     }
+    return false;
   }
 
   //list that get a list of possible moves and return a list of opponent moves
@@ -374,8 +292,18 @@ class BoardData {
 
   }
 
+  removePiece(row, col) {
+    console.log("heloooooooooooooooooooooooooo");
+    for (let i = 0; i < this.pieces.length; i++) {
+      const piece = this.pieces[i];
+      if (piece.row === row && piece.col === col) {
+        // Remove piece at index i
+        this.pieces.splice(i, 1);
+      }
+    }
+  }
 
-
+  //this function gets the row and col of the oponnent plaer and the piece of the player that we play with and its eat the player
   eat(row, col, piece) {
     let i = 0;
     if (i < 1) {
@@ -392,8 +320,7 @@ class BoardData {
       console.log("set");
       let newLocation = new BoardData(piece);
       // i++;
-      // return newLocation;
-
+      return newLocation;
     }
 
   }
@@ -406,94 +333,79 @@ function addImage(cell, type, name, row, col) {
   image.setAttribute("id", row + " " + col);
   cell.appendChild(image);
 }
-
 function removeImage(cell, type, name, row, col) {
   //receive the same thing of add img and remove the img from the same cell that it got
   const image = document.getElementById(row + " " + col);
   image.remove();
 }
 //check if you can go there
-function inRules(actualPiece, row, col) {
+function inRules(row, col, piece) {
   let possibleMoves = [];
-  possibleMoves = actualPiece.getPossibleMoves(boardData);
+  //console.log(piece);
+  possibleMoves = piece.getPossibleMoves(boardData);
   // console.log(arr.length);
-  for (let i = 0; i < possibleMoves.length; i++) {
-    if (possibleMoves[i][0] == row && possibleMoves[i][1] == col) {
+  for (const possibleMove of possibleMoves) {
+    if (possibleMove[0] === row && possibleMove[1] === col) {
       return true;
     }
   }
   return false;
 }
-
 let selectedCell = undefined;
 
 function eatOpponnent(e, row, col, piece) {
-  //const opponnent =boardData.getPiece(row,col);
   boardData.eat(row, col, piece);
-
 }
+
+function showMovesForPiece(row, col) {
+  console.log('showMovesForPiece');
+  // Clear all previous possible moves
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    for (let j = 0; j < BOARD_SIZE; j++) {
+      table.rows[i].cells[j].classList.remove('options');
+      table.rows[i].cells[j].classList.remove('onIt');
+    }
+  }
+
+  // Show possible moves
+  const piece = boardData.getPiece(row, col);
+  if (piece !== undefined) {
+    let possibleMoves = piece.getPossibleMoves(boardData);
+    for (let possibleMove of possibleMoves) {
+      const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
+      cell.classList.add('options');
+    }
+  }
+
+  table.rows[row].cells[col].classList.add('onIt');
+  selectedPiece = piece;
+}
+
 
 function onCellClick(e, row, col) {
   //clear previous selected move
   let opponentMoves = []
   let rowList = []
   let colList = []
-  for (let i = 0; i < BOARD_SIZE; i++) {
-    for (let j = 0; j < BOARD_SIZE; j++) {
-      table.rows[i].cells[j].classList.remove("options");
-    }
-  }
-  //show possible moves
-  const piece = boardData.getPiece(row, col);
-  let actualPiece = boardData.getPiece(row, col);
-  if (piece !== undefined) {
-    getPiece = boardData.getPiece(row, col);
-    let possibleMoves = piece.getPossibleMoves(boardData);
-    opponentMoves = boardData.oponnentList(possibleMoves);
-    for (let possibleMove of possibleMoves) {
-      const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
-      cell.classList.add("options");
 
-      if (opponentMoves !== 0) {
-        for (let opponentMove of opponentMoves) {
-          rowList.push(opponentMove[[0]].getRow());
-          colList.push(opponentMove[[0]].getCol());
-          table.rows[opponentMove[[0]].getRow()].cells[opponentMove[[0]].getCol()].addEventListener("click", (event) => eatOpponnent(event, opponentMove[[0]].getRow(), opponentMove[[0]].getCol(), piece))
-          opponentMoves = [];
-        }
-      }
-    }
-  }
 
+  // selectedPiece - The current selected piece (selected in previous click)
+  // row, col - the currently clicked cell - it may be empty, or have a piece.
+  if (selectedPiece === undefined) {
+    showMovesForPiece(row, col);
+  }
   else {
-    // console.log(rowList.length);
-    // // td.addEventListener("click", (event) => onCellClick(event, row, col));
+    if (boardData.movePiece(row, col, selectedPiece)) {
+      selectedPiece = undefined;
 
-    // for (let i = 0; i < rowList.length; i++) {
-    //   console.log(row + "  " + rowList[i] + "   " + col + "   " + colList[i]);
-    //   if (row === rowList[i] && col === colList[i]) {
-    //     console.log("chicos");
-    //     boardData.eat(row, col, boardData, getPiece(rowList[i], colList[i]))
-    //TODO:erase the opponent player
-    // }
-
-
-    if (getPiece !== undefined) {//remember the place after the click !!!!!!!!!!!!this remember only after you click on someone else!!!!!!!!!
-
-      //  console.log("chicos1");
-      const pieceSetMovement = boardData.movePiece(row, col, getPiece);
-
-      getPiece = undefined;
+      // Recreate whole board - this is not efficient, but doesn't affect user experience
+      createChessBoard(boardData);
+      console.log("created");
+    } else {
+      showMovesForPiece(row, col);
     }
-    //receive the selected piece and send it to movepiece that needs to change the place of the piece
-
-
-
   }
 
-
-
-  let td = document.getElementsByTagName("td");
   //clear previous selected cell
   if (selectedCell !== undefined) {
     selectedCell.classList.remove("onIt");
@@ -528,16 +440,24 @@ function addFirstRowPieces(result, row, player) {
 }
 
 //_____________________________________________________________create the board itself
+function initGame() {
+  // Create list of pieces (32 total)
+  boardData = new BoardData(getInitialPieces());
+  createChessBoard(boardData);
+}
 
-function createChessBoard() {
+
+
+function createChessBoard(boardData) {
+  table = document.getElementById(CHESS_BOARD_ID);
+  if (table !== null) {
+    table.remove();
+  }
+
   let body = document.getElementsByTagName("body")[0];
 
-  let h1 = document.createElement("h1");
-  let text2 = document.createTextNode("Chess Board Of Noam Benzimra");
-  h1.appendChild(text2);
-  body.appendChild(h1);
-
   table = document.createElement("table");
+  table.id = CHESS_BOARD_ID;
 
   tblBody = document.createElement("tbody");
   let thead = document.createElement("thead");
@@ -577,10 +497,9 @@ function createChessBoard() {
   table.setAttribute("border", "4");
 
   //pieces = getInitialPieces();
-  boardData = new BoardData(getInitialPieces());
+
   console.log(boardData);
   // add images to the board
-
   for (let piece of boardData.pieces) {
     addImage(
       tblBody.rows[piece.row].cells[piece.col],
@@ -591,4 +510,4 @@ function createChessBoard() {
     );
   }
 }
-window.addEventListener("load", createChessBoard);
+window.addEventListener("load", initGame);
