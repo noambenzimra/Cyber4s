@@ -333,11 +333,7 @@ function addImage(cell, type, name, row, col) {
   image.setAttribute("id", row + " " + col);
   cell.appendChild(image);
 }
-function removeImage(cell, type, name, row, col) {
-  //receive the same thing of add img and remove the img from the same cell that it got
-  const image = document.getElementById(row + " " + col);
-  image.remove();
-}
+
 //check if you can go there
 function inRules(row, col, piece) {
   let possibleMoves = [];
