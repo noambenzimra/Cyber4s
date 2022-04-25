@@ -76,3 +76,17 @@ tr:nth-of-type(odd) td:nth-of-type(odd):hover {
 .options {
     background-color: rgba(59, 194, 47, 0.705);
 }
+
+@media only screen and (max-width:500px) {
+    /* tr {
+        width: 40px;
+        height: 40px;
+    } */
+
+    table {
+        width: 40%;
+        height: 40%;
+        float: left
+    }
+
+}
