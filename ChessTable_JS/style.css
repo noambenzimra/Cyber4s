@@ -35,8 +35,8 @@ td {
 
 td {
     /* text-align: left; */
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
 
 }
 
@@ -92,8 +92,8 @@ tr:nth-of-type(odd) td:nth-of-type(odd):hover {
 
     td {
         /* text-align: left; */
-        width: 30px;
-        height: 50px;
+        width: 64px;
+        height: 64px;
 
     }
 

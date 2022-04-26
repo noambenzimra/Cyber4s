@@ -192,10 +192,10 @@ class Piece {
     //return the bishop moves ,without the move that the piece have another piece in front of him
     getBishopMoves() {
         let result = [];
-        result = result.concat(this.getMovesInDirection(-1, -1, boardData));
-        result = result.concat(this.getMovesInDirection(-1, 1, boardData));
-        result = result.concat(this.getMovesInDirection(1, -1, boardData));
-        result = result.concat(this.getMovesInDirection(1, 1, boardData));
+        result = result.concat(this.getMovesInDirection(-1, -1, game.boardData));
+        result = result.concat(this.getMovesInDirection(-1, 1, game.boardData));
+        result = result.concat(this.getMovesInDirection(1, -1, game.boardData));
+        result = result.concat(this.getMovesInDirection(1, 1, game.boardData));
         return result;
     }
     //return the king moves
