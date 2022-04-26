@@ -1,9 +1,12 @@
 class Piece {
     constructor(row, col, type, player) {
         this.row = row;
+        this.startRow = row;
         this.col = col;
+        this.startRow = row;
         this.type = type;
         this.player = player;
+        this.cantEat = false;
     }
 
     getPlayer() {
@@ -86,10 +89,11 @@ class Piece {
                 if (this.row === 6) {
 
                     if (game.boardData.isPlayer(this.row - 1, this.col, WHITE_PLAYER)) {
-                        this.eatSign(this.row - 1, this.col);
+
+                        this.cantEat = true;
                     }
                     else if (game.boardData.isPlayer(this.row - 2, this.col, WHITE_PLAYER)) {
-                        this.eatSign(this.row - 2, this.col);
+                        this.cantEat = true;
                     }
 
                     result.push([-1, 0]);
@@ -99,14 +103,14 @@ class Piece {
                 else {
                     result.push([-1, 0]);
                     if (game.boardData.isPlayer(this.row - 1, this.col, WHITE_PLAYER)) {
-                        this.eatSign(this.row - 1, this.col);
+                        this.cantEat = true;
+                        console.log(game.boardData.cantEat);
                     }
 
                 }
             }
         }
         else if ((game.boardData.isEmpty(this.row + 1, this.col)) || (game.boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER))) {
-
             if (game.boardData.isPlayer(this.row + 1, this.col - 1, DARK_PLAYER)) {
                 result.push([1, -1]);
                 this.eatSign(this.row + 1, this.col - 1);
@@ -117,10 +121,11 @@ class Piece {
             }
             if (this.row === 1) {
                 if (game.boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER)) {
-                    this.eatSign(this.row + 1, this.col);
+
+                    this.cantEat = true;
                 }
                 else if (game.boardData.isPlayer(this.row + 2, this.col, DARK_PLAYER)) {
-                    this.eatSign(this.row + 2, this.col);
+                    this.cantEat = true;
                 }
 
                 result.push([2, 0]);
@@ -129,7 +134,7 @@ class Piece {
             else {
                 result.push([1, 0]);
                 if (game.boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER)) {
-                    this.eatSign(this.row + 1, this.col);
+                    this.cantEat = true;
                 }
 
             }
@@ -228,11 +233,21 @@ class Piece {
         }
         return WHITE_PLAYER;
     }
+    getType() {
+        return this.type;
+    }
     getRow() {
         return this.row;
     }
     getCol() {
         return this.col;
+    }
+
+    getStartRow() {
+        return this.startRow;
+    }
+    getStartCol() {
+        return this.startCol;
     }
 
     eatSign(row, col) {

@@ -16,6 +16,7 @@ let game;
 let selectedPiece;
 let getPiece = undefined;
 let beforeEat = false;
+let cantEat = false;
 
 //____________________________________________________________________global function. like-addImage,addimageByIndex,onCellClick
 function addImage(cell, type, name, row, col) {
@@ -43,7 +44,10 @@ function tryUpdateSelectedPiece(row, col) {
     let possibleMoves = piece.getPossibleMoves(game.boardData);
     for (let possibleMove of possibleMoves) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
-      cell.classList.add('options');
+      if (!piece.cantEat) {
+        cell.classList.add('options');
+      }
+
 
     }
   }
