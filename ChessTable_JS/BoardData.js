@@ -38,20 +38,6 @@ class BoardData {
         return piece != undefined && piece.player === player;
     }
 
-    //the function receive new row and col that we want to move to and the piece that we want to move to this location. its return true or false if the piece has moved
-    movePiece(row, col, piece) {
-        if (inRules(row, col, piece)) {
-            if (this.getTurn() === piece.getPlayer()) {
-                this.removePiece(row, col);
-                piece.row = row;
-                piece.col = col;
-                this.turn++;
-                return true;
-            }
-
-        }
-        return false;
-    }
     removePiece(row, col) {
         for (let i = 0; i < this.pieces.length; i++) {
             const piece = this.pieces[i];

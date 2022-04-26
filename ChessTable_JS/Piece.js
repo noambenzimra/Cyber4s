@@ -15,8 +15,12 @@ class Piece {
         this.col = col;
     }
 
+
     getPossibleMoves(boardData) {
         // Get relative moves
+        // if(game.currentPlayer !==this.player){
+        //     return [];
+        // }
         let moves;
         if (this.type === PAWN) {
             moves = this.getPawnMoves();
@@ -72,22 +76,22 @@ class Piece {
     getPawnMoves() {
         let result = [];
         if (this.player === DARK_PLAYER) {
-            if (boardData.isEmpty(this.row - 1, this.col) || (boardData.isPlayer(this.row - 1, this.col, WHITE_PLAYER))) {
-                if (boardData.isPlayer(this.row - 1, this.col - 1, WHITE_PLAYER)) {
+            if (game.boardData.isEmpty(this.row - 1, this.col) || (game.boardData.isPlayer(this.row - 1, this.col, WHITE_PLAYER))) {
+                if (game.boardData.isPlayer(this.row - 1, this.col - 1, WHITE_PLAYER)) {
                     result.push([-1, -1]);
                     this.eatSign(this.row - 1, this.col - 1);
                 }
-                else if (boardData.isPlayer(this.row - 1, this.col + 1, WHITE_PLAYER)) {
+                else if (game.boardData.isPlayer(this.row - 1, this.col + 1, WHITE_PLAYER)) {
                     result.push([-1, +1]);
                     this.eatSign(this.row - 1, this.col + 1);
                 }
 
                 if (this.row === 6) {
 
-                    if (boardData.isPlayer(this.row - 1, this.col, WHITE_PLAYER)) {
+                    if (game.boardData.isPlayer(this.row - 1, this.col, WHITE_PLAYER)) {
                         this.eatSign(this.row - 1, this.col);
                     }
-                    else if (boardData.isPlayer(this.row - 2, this.col, WHITE_PLAYER)) {
+                    else if (game.boardData.isPlayer(this.row - 2, this.col, WHITE_PLAYER)) {
                         this.eatSign(this.row - 2, this.col);
                     }
 
@@ -97,28 +101,28 @@ class Piece {
                 }
                 else {
                     result.push([-1, 0]);
-                    if (boardData.isPlayer(this.row - 1, this.col, WHITE_PLAYER)) {
+                    if (game.boardData.isPlayer(this.row - 1, this.col, WHITE_PLAYER)) {
                         this.eatSign(this.row - 1, this.col);
                     }
 
                 }
             }
         }
-        else if ((boardData.isEmpty(this.row + 1, this.col)) || (boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER))) {
+        else if ((game.boardData.isEmpty(this.row + 1, this.col)) || (game.boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER))) {
 
-            if (boardData.isPlayer(this.row + 1, this.col - 1, DARK_PLAYER)) {
+            if (game.boardData.isPlayer(this.row + 1, this.col - 1, DARK_PLAYER)) {
                 result.push([1, -1]);
                 this.eatSign(this.row + 1, this.col - 1);
             }
-            else if (boardData.isPlayer(this.row + 1, this.col + 1, DARK_PLAYER)) {
+            else if (game.boardData.isPlayer(this.row + 1, this.col + 1, DARK_PLAYER)) {
                 result.push([1, 1]);
                 this.eatSign(this.row + 1, this.col + 1);
             }
             if (this.row === 1) {
-                if (boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER)) {
+                if (game.boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER)) {
                     this.eatSign(this.row + 1, this.col);
                 }
-                else if (boardData.isPlayer(this.row + 2, this.col, DARK_PLAYER)) {
+                else if (game.boardData.isPlayer(this.row + 2, this.col, DARK_PLAYER)) {
                     this.eatSign(this.row + 2, this.col);
                 }
 
@@ -127,7 +131,7 @@ class Piece {
             }
             else {
                 result.push([1, 0]);
-                if (boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER)) {
+                if (game.boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER)) {
                     this.eatSign(this.row + 1, this.col);
                 }
 
@@ -152,13 +156,13 @@ class Piece {
             let col = this.col + directionCol * i;
             if (boardData.isEmpty(row, col)) {
                 result.push([row, col]);
-            } else if (boardData.isPlayer(row, col, this.getOpponent())) {
+            } else if (game.boardData.isPlayer(row, col, this.getOpponent())) {
                 result.push([row, col]);
                 this.eatSign(row, col)
 
                 return result;
             }
-            else if (boardData.isPlayer(row, col, this.player)) {
+            else if (game.boardData.isPlayer(row, col, this.player)) {
                 return result;
             }
         }
@@ -176,9 +180,9 @@ class Piece {
         for (let relativeMove of relativeMoves) {
             let row = this.row + relativeMove[0];
             let col = this.col + relativeMove[1];
-            if (!boardData.isPlayer(row, col, this.player))//if there is not a player or its an opponent player go in
+            if (!game.boardData.isPlayer(row, col, this.player))//if there is not a player or its an opponent player go in
             {
-                if (boardData.isPlayer(row, col, this.getOpponent())) {
+                if (game.boardData.isPlayer(row, col, this.getOpponent())) {
                     this.eatSign(row, col);
                 }
                 result.push([row, col]);
@@ -204,9 +208,9 @@ class Piece {
         for (let relativeMove of relativeMoves) {
             let row = this.row + relativeMove[0];
             let col = this.col + relativeMove[1];
-            if (!boardData.isPlayer(row, col, this.player)) {//if there is not a player or its an opponent player go in
+            if (!game.boardData.isPlayer(row, col, this.player)) {//if there is not a player or its an opponent player go in
                 result.push([row, col]);
-                if (boardData.isPlayer(row, col, this.getOpponent())) {
+                if (game.boardData.isPlayer(row, col, this.getOpponent())) {
                     this.eatSign(row, col);
                 }
             }

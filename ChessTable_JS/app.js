@@ -12,7 +12,7 @@ const CHESS_BOARD_ID = 'chess-board';
 const PIECES = ["rook", "knight", "bishop", "king", "queen", "bishop", "knight", "rook"]
 let table;
 let pieces = [];
-let boardData;
+let game;
 let selectedPiece;
 let getPiece = undefined;
 let beforeEat = false;
@@ -26,17 +26,6 @@ function addImage(cell, type, name, row, col) {
   cell.appendChild(image);
 }
 
-//check if you can go there
-function inRules(row, col, piece) {
-  let possibleMoves = [];
-  possibleMoves = piece.getPossibleMoves(boardData);
-  for (const possibleMove of possibleMoves) {
-    if (possibleMove[0] === row && possibleMove[1] === col) {
-      return true;
-    }
-  }
-  return false;
-}
 let selectedCell = undefined;
 
 function tryUpdateSelectedPiece(row, col) {
@@ -50,9 +39,9 @@ function tryUpdateSelectedPiece(row, col) {
     }
   }
   // Show possible moves
-  const piece = boardData.getPiece(row, col);
-  if (piece !== undefined && boardData.getTurn() === piece.getPlayer()) {
-    let possibleMoves = piece.getPossibleMoves(boardData);
+  const piece = game.boardData.getPiece(row, col);
+  if (piece !== undefined && game.boardData.getTurn() === piece.getPlayer()) {
+    let possibleMoves = piece.getPossibleMoves(game.boardData);
     for (let possibleMove of possibleMoves) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
       cell.classList.add('options');
@@ -71,7 +60,7 @@ function onCellClick(row, col) {
   let colList = []
   // selectedPiece - The current selected piece (selected in previous click)
   // row, col - the currently clicked cell - it may be empty, or have a piece.
-  if (selectedPiece !== undefined && boardData.movePiece(row, col, selectedPiece)) {
+  if (selectedPiece !== undefined && game.movePiece(row, col, selectedPiece)) {
     selectedPiece = undefined;
     if (beforeEat) {
       const cell = table.rows[row].cells[col];
@@ -79,16 +68,11 @@ function onCellClick(row, col) {
     }
 
     // Recreate whole board - this is not efficient, but doesn't affect user experience
-    createChessBoard(boardData);
+    createChessBoard(game.boardData);
   }
   else {
     tryUpdateSelectedPiece(row, col);
   }
-}
-function initGame() {
-  // Create list of pieces (32 total)
-  boardData = new BoardData();
-  createChessBoard(boardData);
 }
 
 
@@ -150,5 +134,11 @@ function createChessBoard(boardData) {
       piece.col
     );
   }
+
+}
+function initGame() {
+  // Create list of pieces (32 total)
+  game = new Game();
+  createChessBoard(game.boardData);
 }
 window.addEventListener("load", initGame);
