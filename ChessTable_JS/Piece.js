@@ -18,9 +18,6 @@ class Piece {
 
     getPossibleMoves(boardData) {
         // Get relative moves
-        // if(game.currentPlayer !==this.player){
-        //     return [];
-        // }
         let moves;
         if (this.type === PAWN) {
             moves = this.getPawnMoves();

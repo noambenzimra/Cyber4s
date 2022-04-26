@@ -1,5 +1,6 @@
 body {
     text-align: center;
+    background-color: rgb(219, 219, 219);
 
 }
 
@@ -13,12 +14,13 @@ h1 {
 
 table {
     table-layout: fixed;
+    align-items: center;
     /* margin: 0; */
-    width: 50%;
-    height: 40%;
+    /* width: 50%;
+    height: 20%; */
     border: 29px solid #462921;
     border-collapse: separate;
-    margin: 5% 10% 10% 10%
+    margin: 2% 25%
 }
 
 th {
@@ -82,8 +84,8 @@ tr:nth-of-type(odd) td:nth-of-type(odd):hover {
 
 @media only screen and (max-width:500px) {
     table {
-        width: 40%;
-        height: 40%;
+        margin: 0% 0%;
+        height: 10px;
         float: left
     }
 

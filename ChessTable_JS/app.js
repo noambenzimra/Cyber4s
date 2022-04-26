@@ -35,7 +35,6 @@ function tryUpdateSelectedPiece(row, col) {
       table.rows[i].cells[j].classList.remove('options');
       table.rows[i].cells[j].classList.remove('onIt');
       table.rows[i].cells[j].classList.remove('beforeEat');
-
     }
   }
   // Show possible moves
@@ -55,9 +54,6 @@ function tryUpdateSelectedPiece(row, col) {
 
 function onCellClick(row, col) {
   //clear previous selected move
-  let opponentMoves = []
-  let rowList = []
-  let colList = []
   // selectedPiece - The current selected piece (selected in previous click)
   // row, col - the currently clicked cell - it may be empty, or have a piece.
   if (selectedPiece !== undefined && game.movePiece(row, col, selectedPiece)) {
