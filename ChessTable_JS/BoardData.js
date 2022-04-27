@@ -14,9 +14,13 @@ class BoardData {
         }
     }
     getTurn() {
+        let h2 = document.querySelector("h2")
         if (this.turn % 2 == 0) {
+            h2.innerText = "White player's turn"
             return WHITE_PLAYER;
         }
+        h2.innerText = "Dark player's turn"
+
         return DARK_PLAYER;
     }
 

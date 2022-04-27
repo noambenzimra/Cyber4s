@@ -6,7 +6,6 @@ body {
 
 
 h1 {
-    margin-left: 30%;
 
     color: #441a03;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
@@ -20,7 +19,7 @@ table {
     height: 100%; */
     border: 29px solid #462921;
     border-collapse: separate;
-    /* margin: 2% 25% */
+    margin: 2% 25%
 }
 
 th {
@@ -63,9 +62,11 @@ td:hover {
     position: absolute;
     left: 50%;
     right: 50%;
+    top: 50%;
+    bottom: 50%;
+    padding: 50px;
     transform: translate(-50%, -50%);
-    background: white;
-    padding: 500;
+    background: #cdcdcdf5;
     border-radius: 10px;
     width: max-content;
 }

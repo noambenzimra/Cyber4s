@@ -37,7 +37,9 @@ function tryUpdateSelectedPiece(row, col) {
       table.rows[i].cells[j].classList.remove('options');
       table.rows[i].cells[j].classList.remove('onIt');
       table.rows[i].cells[j].classList.remove('beforeEat');
+
     }
+
   }
   // Show possible moves
   const piece = game.boardData.getPiece(row, col);
@@ -47,6 +49,7 @@ function tryUpdateSelectedPiece(row, col) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
 
       if (!piece.cantEat) {
+        //TODO:maybe adds eatsign func here
         cell.classList.add('options');
       }
     }
@@ -61,7 +64,7 @@ function onCellClick(row, col) {
   //clear previous selected move
   // selectedPiece - The current selected piece (selected in previous click)
   // row, col - the currently clicked cell - it may be empty, or have a piece.
-  if (selectedPiece !== undefined && game.movePiece(row, col, selectedPiece) && game.winner === undefined) {
+  if (selectedPiece !== undefined && game.movePiece(row, col, selectedPiece)) {
     selectedPiece = undefined;
     // Recreate whole board - this is not efficient, but doesn't affect user experience
     createChessBoard(game.boardData);

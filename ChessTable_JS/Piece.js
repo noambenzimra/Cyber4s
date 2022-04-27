@@ -165,7 +165,6 @@ class Piece {
             } else if (game.boardData.isPlayer(row, col, this.getOpponent())) {
                 result.push([row, col]);
                 this.eatSign(row, col);
-
                 return result;
             }
             else if (game.boardData.isPlayer(row, col, this.player)) {
@@ -255,10 +254,8 @@ class Piece {
     }
 
     eatSign(row, col) {
-        // let result = []
         const cell = table.rows[row].cells[col];
         cell.classList.add('beforeEat');
-        // result.push(cell)
 
     }
 }   
