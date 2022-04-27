@@ -89,26 +89,17 @@ class Piece {
                 }
 
                 if (this.row === 6) {
-
-                    if (game.boardData.isPlayer(this.row - 1, this.col, WHITE_PLAYER)) {
-
-                        this.cantEat = true;
+                    if ((game.boardData.isEmpty(this.row - 1, this.col))) {
+                        result.push([-1, 0]);
                     }
-                    else if (game.boardData.isPlayer(this.row - 2, this.col, WHITE_PLAYER)) {
-                        this.cantEat = true;
+                    if ((game.boardData.isEmpty(this.row - 2, this.col))) {
+                        result.push([-2, 0]);
                     }
-
-                    result.push([-1, 0]);
-                    result.push([-2, 0]);
 
                 }
-                else {
+
+                else if ((game.boardData.isEmpty(this.row - 1, this.col))) {
                     result.push([-1, 0]);
-                    if (game.boardData.isPlayer(this.row - 1, this.col, WHITE_PLAYER)) {
-                        this.cantEat = true;
-
-                    }
-
                 }
             }
         }
@@ -124,23 +115,15 @@ class Piece {
                 this.cantEat = false;
             }
             if (this.row === 1) {
-                if (game.boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER)) {
-
-                    this.cantEat = true;
+                if ((game.boardData.isEmpty(this.row + 1, this.col))) {
+                    result.push([1, 0]);
                 }
-                else if (game.boardData.isPlayer(this.row + 2, this.col, DARK_PLAYER)) {
-                    this.cantEat = true;
+                if ((game.boardData.isEmpty(this.row + 2, this.col))) {
+                    result.push([2, 0]);
                 }
-
-                result.push([2, 0]);
-                result.push([1, 0]);
             }
-            else {
+            else if ((game.boardData.isEmpty(this.row + 1, this.col))) {
                 result.push([1, 0]);
-                if (game.boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER)) {
-                    this.cantEat = true;
-                }
-
             }
 
         }

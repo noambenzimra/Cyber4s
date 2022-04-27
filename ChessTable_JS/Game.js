@@ -1,5 +1,5 @@
 class Game {
-    constructor() {
+    constructor(firstPlayer) {
         this.boardData = new BoardData();
         // this.kingHasBeenMoved = [];
         this.winner = undefined;
@@ -18,13 +18,13 @@ class Game {
                     this.winner = piece.player;
                     return false;
                 }
-
                 // if (piece.getType() === 'king') {
                 //     this.kingHasBeenMoved(piece);
                 // }
                 // if (piece.getType() === 'rook') {
                 //     this.rookHasBeenMoved(piece);
                 // }
+
                 return true;
             }
         }
@@ -41,9 +41,10 @@ class Game {
                 console.log("win");
                 return false;
             }
-            if (possibleMove[0] === row && possibleMove[1] === col) {
+            if (possibleMove[0] === row && possibleMove[1] === col && piece.cantEat == false) {
                 return true;
             }
+
         }
 
         return false;

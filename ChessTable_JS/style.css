@@ -8,8 +8,36 @@ body {
 h1 {
 
     color: #441a03;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serifl
 }
+
+h2 {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: #b5915f;
+}
+
+.whiteSign {
+
+    color: #b5915f;
+}
+
+.blackSign {
+    color: #725122;
+}
+
+/* .whitePlayer {
+    display: inline-block;
+    width: 300px;
+    text-align: left;
+    margin-right: 0%;
+}
+
+.darkPlayer {
+    display: inline-block;
+    width: 300px;
+    text-align: right;
+    margin-left: 80%;
+} */
 
 table {
     position: relative;
