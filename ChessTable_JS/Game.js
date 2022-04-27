@@ -1,7 +1,8 @@
 class Game {
     constructor() {
         this.boardData = new BoardData();
-        this.kingHasBeenMoved = [];
+        // this.kingHasBeenMoved = [];
+        this.winner = undefined;
         // this.currentPlayer = firstPlayer;
     }
 
@@ -9,16 +10,21 @@ class Game {
     movePiece(row, col, piece) {
         if (this.inRules(row, col, piece)) {
             if (this.boardData.getTurn() === piece.getPlayer()) {
-                this.boardData.removePiece(row, col);
+                const removedPiece = this.boardData.removePiece(row, col);
                 piece.row = row;
                 piece.col = col;
                 this.boardData.turn++;
-                if (piece.getType() === 'king') {
-                    this.kingHasBeenMoved(piece);
+                if (removedPiece !== undefined && removedPiece.getType() === 'king') {
+                    this.winner = piece.player;
+                    return false;
                 }
-                if (piece.getType() === 'rook') {
-                    this.rookHasBeenMoved(piece);
-                }
+
+                // if (piece.getType() === 'king') {
+                //     this.kingHasBeenMoved(piece);
+                // }
+                // if (piece.getType() === 'rook') {
+                //     this.rookHasBeenMoved(piece);
+                // }
                 return true;
             }
         }
@@ -31,29 +37,34 @@ class Game {
         //  let kingHasBeenMoved = this.kingHasBeenMoved(piece);
         let possibleMoves = piece.getPossibleMoves(this.boardData);
         for (const possibleMove of possibleMoves) {
-            if (possibleMove[0] === row && possibleMove[1] === col && !piece.cantEat) {
+            if (this.winner !== undefined) {
+                console.log("win");
+                return false;
+            }
+            if (possibleMove[0] === row && possibleMove[1] === col) {
                 return true;
             }
         }
+
         return false;
     }
 
     //func that checking if there was a first move anf if there was it returning a list of the color of the player and true
     //TODO:check what to put in the list before its returning this and where (maybe in the constructor(?))
-    kingHasBeenMoved(piece) {
-        let player = piece.getPlayer();
-        let kingHasBeenMoved = [player, true];
-        return kingHasBeenMoved;
-    }
-    //func that checking if there was a first move anf if there was it returning a list of the color of the player and the starting row and col of the rook(its like an id) and true
-    //TODO:check what to put in the list before its returning this and where (maybe in the constructor(?))
-    rookHasBeenMoved(piece) {
-        let player = piece.getPlayer();
-        let startRow = piece.getStartRow();
-        let startCol = piece.getStartCol();
-        let rookHasBeenMoved = [player, startRow, startCol, true];
-        return rookHasBeenMoved;
-    }
+    // kingHasBeenMoved(piece) {
+    //     let player = piece.getPlayer();
+    //     let kingHasBeenMoved = [player, true];
+    //     return kingHasBeenMoved;
+    // }
+    // //func that checking if there was a first move anf if there was it returning a list of the color of the player and the starting row and col of the rook(its like an id) and true
+    // //TODO:check what to put in the list before its returning this and where (maybe in the constructor(?))
+    // rookHasBeenMoved(piece) {
+    //     let player = piece.getPlayer();
+    //     let startRow = piece.getStartRow();
+    //     let startCol = piece.getStartCol();
+    //     let rookHasBeenMoved = [player, startRow, startCol, true];
+    //     return rookHasBeenMoved;
+    // }
 
 
     isEmptyBetween(king, rook) {

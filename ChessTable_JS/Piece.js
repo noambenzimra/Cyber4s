@@ -80,10 +80,12 @@ class Piece {
                 if (game.boardData.isPlayer(this.row - 1, this.col - 1, WHITE_PLAYER)) {
                     result.push([-1, -1]);
                     this.eatSign(this.row - 1, this.col - 1);
+                    this.cantEat = false;
                 }
-                else if (game.boardData.isPlayer(this.row - 1, this.col + 1, WHITE_PLAYER)) {
+                if (game.boardData.isPlayer(this.row - 1, this.col + 1, WHITE_PLAYER)) {
                     result.push([-1, +1]);
                     this.eatSign(this.row - 1, this.col + 1);
+                    this.cantEat = false;
                 }
 
                 if (this.row === 6) {
@@ -104,7 +106,7 @@ class Piece {
                     result.push([-1, 0]);
                     if (game.boardData.isPlayer(this.row - 1, this.col, WHITE_PLAYER)) {
                         this.cantEat = true;
-                        console.log(game.boardData.cantEat);
+
                     }
 
                 }
@@ -114,10 +116,12 @@ class Piece {
             if (game.boardData.isPlayer(this.row + 1, this.col - 1, DARK_PLAYER)) {
                 result.push([1, -1]);
                 this.eatSign(this.row + 1, this.col - 1);
+                this.cantEat = false;
             }
-            else if (game.boardData.isPlayer(this.row + 1, this.col + 1, DARK_PLAYER)) {
+            if (game.boardData.isPlayer(this.row + 1, this.col + 1, DARK_PLAYER)) {
                 result.push([1, 1]);
                 this.eatSign(this.row + 1, this.col + 1);
+                this.cantEat = false;
             }
             if (this.row === 1) {
                 if (game.boardData.isPlayer(this.row + 1, this.col, DARK_PLAYER)) {
@@ -160,7 +164,7 @@ class Piece {
                 result.push([row, col]);
             } else if (game.boardData.isPlayer(row, col, this.getOpponent())) {
                 result.push([row, col]);
-                this.eatSign(row, col)
+                this.eatSign(row, col);
 
                 return result;
             }
@@ -251,7 +255,10 @@ class Piece {
     }
 
     eatSign(row, col) {
+        // let result = []
         const cell = table.rows[row].cells[col];
         cell.classList.add('beforeEat');
+        // result.push(cell)
+
     }
 }   

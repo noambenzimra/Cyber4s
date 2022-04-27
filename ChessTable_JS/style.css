@@ -13,14 +13,14 @@ h1 {
 }
 
 table {
-    table-layout: fixed;
+    position: relative;
     align-items: center;
-    /* margin: 0; */
+    margin: 0 auto;
     /* width: 10%;
     height: 100%; */
     border: 29px solid #462921;
     border-collapse: separate;
-    margin: 2% 25%
+    /* margin: 2% 25% */
 }
 
 th {
@@ -54,13 +54,21 @@ td {
     vertical-align: middle;
 }
 
+
 td:hover {
     background-color: rgba(0, 0, 0, 0.171);
 }
 
-/* tr:nth-of-type(even) td:nth-of-type(even),tr:nth-of-type(odd) td:nth-of-type(odd) {
-    background-color:#440303;
-}   */
+.winner-popup {
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 500;
+    border-radius: 10px;
+    width: max-content;
+}
 
 tr:nth-of-type(even) td:nth-of-type(even):hover {
     background-color: #72512267

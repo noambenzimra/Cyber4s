@@ -17,6 +17,7 @@ let selectedPiece;
 let getPiece = undefined;
 let beforeEat = false;
 let cantEat = false;
+let c = 1;
 
 //____________________________________________________________________global function. like-addImage,addimageByIndex,onCellClick
 function addImage(cell, type, name, row, col) {
@@ -44,15 +45,15 @@ function tryUpdateSelectedPiece(row, col) {
     let possibleMoves = piece.getPossibleMoves(game.boardData);
     for (let possibleMove of possibleMoves) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
+
       if (!piece.cantEat) {
         cell.classList.add('options');
       }
-
-
     }
   }
   table.rows[row].cells[col].classList.add('onIt');
   selectedPiece = piece;
+
 }
 
 
@@ -60,23 +61,27 @@ function onCellClick(row, col) {
   //clear previous selected move
   // selectedPiece - The current selected piece (selected in previous click)
   // row, col - the currently clicked cell - it may be empty, or have a piece.
-  if (selectedPiece !== undefined && game.movePiece(row, col, selectedPiece)) {
+  if (selectedPiece !== undefined && game.movePiece(row, col, selectedPiece) && game.winner === undefined) {
     selectedPiece = undefined;
-    if (beforeEat) {
-      const cell = table.rows[row].cells[col];
-      cell.classList.add('beforeEat');
-    }
-
     // Recreate whole board - this is not efficient, but doesn't affect user experience
     createChessBoard(game.boardData);
   }
   else {
     tryUpdateSelectedPiece(row, col);
+    if (game.winner !== undefined && c === 1) {
+      winnerPopup(game.winner);
+      c++;
+    }
   }
 }
 
+function winnerPopup(gameWinner) {
+  const winnerPopup = document.createElement('div');
+  winnerPopup.textContent = gameWinner + ' player wins!';
+  winnerPopup.classList.add('winner-popup');
+  table.appendChild(winnerPopup)
 
-
+}
 function createChessBoard(boardData) {
   table = document.getElementById(CHESS_BOARD_ID);
   if (table !== null) {

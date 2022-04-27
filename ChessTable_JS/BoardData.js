@@ -45,6 +45,7 @@ class BoardData {
                 // Remove piece at index i
                 beforeEat = true;
                 this.pieces.splice(i, 1);
+                return piece;
             }
         }
     }
