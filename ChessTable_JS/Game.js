@@ -27,8 +27,8 @@ class Game {
 
     //check if you can go there
     inRules(row, col, piece) {
-        let rookHasBeenMoved = this.rookHasBeenMoved(piece);
-        let kingHasBeenMoved = this.kingHasBeenMoved(piece);
+        //  let rookHasBeenMoved = this.rookHasBeenMoved(piece);
+        //  let kingHasBeenMoved = this.kingHasBeenMoved(piece);
         let possibleMoves = piece.getPossibleMoves(this.boardData);
         for (const possibleMove of possibleMoves) {
             if (possibleMove[0] === row && possibleMove[1] === col && !piece.cantEat) {
