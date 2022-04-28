@@ -2,16 +2,31 @@ class Game {
     constructor(firstPlayer) {
         this.boardData = new BoardData();
         this.winner = undefined;
+        this.kingHasBeenMoved = [[DARK_PLAYER, false], [WHITE_PLAYER, false]];
+        this.rookHasBeenMoved = [[DARK_PLAYER, 7, 0, false], [DARK_PLAYER, 7, 7, false], [WHITE_PLAYER, 0, 0, false], [WHITE_PLAYER, 0, 7, false]];
     }
 
     //the function receive new row and col that we want to move to and the piece that we want to move to this location. its return true or false if the piece has been moved
     movePiece(row, col, piece) {
         if (this.inRules(row, col, piece)) {
 
+            //this func are checking that if the player want to castle he just needs to put the rook near to the king (left or right it depends...) and this is doing the castling
+            if (this.canCastle(this.kingHasBeenMoved, this.rookHasBeenMoved, piece) && piece.type === 'rook') {
+                this.castling(row, col, piece);
+            }
+
             if (this.boardData.getTurn() === piece.getPlayer()) {
                 const removedPiece = this.boardData.removePiece(row, col);
                 piece.row = row;
                 piece.col = col;
+
+                //check whats specific rook/king has moved to block the castling
+                if (piece.type === 'king' || piece.type === 'rook') {
+                    this.hasBeenMoved(piece);
+
+                }
+
+
                 //if the piece thathas been eaten is the king stop the game(return false)
                 if (removedPiece !== undefined && removedPiece.getType() === 'king') {
                     this.winner = piece.player;
@@ -26,24 +41,8 @@ class Game {
                         this.changeToQueen(piece);
                     }
                 }
-                //after every click i want that the color of the actual player that needs to play transform itself to red 
-                let div_White = document.getElementById("div_White")
-                let div_Dark = document.getElementById("div_Dark")
-                if (this.boardData.turn % 2 !== 0) {
-                    div_White.classList.remove("whitePlayer")
-                    div_Dark.classList.remove("darkSign")
-                    div_White.classList.add("whiteSign")
-                    div_Dark.classList.add("darkPlayer")
-
-                }
-                else {
-                    div_Dark.classList.remove("darkPlayer")
-                    div_White.classList.remove("whiteSign")
-                    div_Dark.classList.add("darkSign")
-                    div_White.classList.add("whitePlayer")
-                }
-
-
+                //after every click the actual player transform itself to red ("white players turn"/"dark players turn")
+                this.redNeonSign()
                 this.boardData.turn++;
 
                 //this func check that the king is not in check
@@ -107,17 +106,17 @@ class Game {
             possibleMoves = possibleMoves.concat(piece.getPossibleMoves(this.boardData));
         }
         // Finding the oponnent King's Location(row, col)
-        let kingIndex;
+        let kingPosition;
         for (let piece of this.boardData.pieces) {
             if (piece.type === KING && piece.player === this.boardData.getTurn()) {
-                kingIndex = [piece.row, piece.col];
+                kingPosition = [piece.row, piece.col];
             }
         }
         // Check if one of the next cells that the last player can advance to is the King's cell:
-        for (let i = 0; i < possibleMoves.length; i++) {
-            if (possibleMoves[i][0] === kingIndex[0] && possibleMoves[i][1] === kingIndex[1]) {
+        for (let position = 0; position < possibleMoves.length; position++) {
+            if (possibleMoves[position][0] === kingPosition[0] && possibleMoves[position][1] === kingPosition[1]) {
 
-                let piece = this.boardData.getPiece(kingIndex[0], kingIndex[1]);
+                let piece = this.boardData.getPiece(kingPosition[0], kingPosition[1]);
 
                 //if there is a check its gonna create a paragraph and the players gonna see that there is a check(in red color)
                 if (piece.player === DARK_PLAYER) {
@@ -162,34 +161,192 @@ class Game {
 
     }
 
-    //TODO:CASTLING
+    //this func check if the king/the rook has been moved and if its true its gonna update in the  this.kingHasBeenMoved/this.rookHasBeenMoved(true/false)
+    hasBeenMoved(piece) {
+        if (piece.type === 'king') {
+            if (piece.player === DARK_PLAYER) {
+                this.kingHasBeenMoved[0][1] = true;
+                this.rookHasBeenMoved[0][3] = true;
+                this.rookHasBeenMoved[1][3] = true;
+            }
+            else {
+                if (piece.player === WHITE_PLAYER) {
+                    this.kingHasBeenMoved[1][1] = true;
+                    this.rookHasBeenMoved[2][3] = true;
+                    this.rookHasBeenMoved[3][3] = true;
+                }
+            }
+        }
+        else if (piece.type === 'rook') {
+            if (piece.player === DARK_PLAYER) {
+                if (piece.startCol === 0) {
+                    this.rookHasBeenMoved[0][3] = true;
+                }
+                else {
+                    this.rookHasBeenMoved[1][3] = true;
+                }
+            }
+            else {
+                if (piece.player === WHITE_PLAYER) {
+                    if (piece.startCol === 0) {
+                        this.rookHasBeenMoved[2][3] = true;
+                    }
+                    else {
+                        this.rookHasBeenMoved[3][3] = true;
+                    }
+                }
+            }
+        }
 
-    //func that checking if there was a first move anf if there was it returning a list of the color of the player and true
-    //TODO:check what to put in the list before its returning this and where (maybe in the constructor(?))
-    // kingHasBeenMoved(piece) {
-    //     let player = piece.getPlayer();
-    //     let kingHasBeenMoved = [player, true];
-    //     return kingHasBeenMoved;
-    // }
-    // //func that checking if there was a first move anf if there was it returning a list of the color of the player and the starting row and col of the rook(its like an id) and true
-    // //TODO:check what to put in the list before its returning this and where (maybe in the constructor(?))
-    // rookHasBeenMoved(piece) {
-    //     let player = piece.getPlayer();
-    //     let startRow = piece.getStartRow();
-    //     let startCol = piece.getStartCol();
-    //     let rookHasBeenMoved = [player, startRow, startCol, true];
-    //     return rookHasBeenMoved;
-    // }
+    }
 
 
-    // isEmptyBetween(king, rook) {
-    //     //TODO:chack that its empty between the king and the rook
-    // }
+    //this func check if there is no player between the rook and the king
+    isEmptyBetween(rook) {
+        if (rook.player === DARK_PLAYER) {
+            if (rook.col === 0) {
+                let i = 1
+                while (this.boardData.isEmpty(7, i)) {
+                    i++
+                }
+                if (i === 3) {
+                    return true;
+                }
 
-    // canCastle(kingHasBeenMoved,rookHasBeenMoved){
-    //TODO:check that the pieces were never moved and that there is not pieces between the both 
-    //TODO:check how i can click on specific cell and itll do automaticly castle (maybe special color or an alert msg)
-    // }
+            }
+            else {
+                let i = 6
+                while (this.boardData.isEmpty(7, i)) {
+                    i--;
+                }
+                if (i === 3) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        if (rook.player === WHITE_PLAYER) {
+            if (rook.col === 0) {
+                let i = 1
+                while (this.boardData.isEmpty(0, i)) {
+                    i++
+                }
+                if (i === 3) {
+                    return true;
+                }
+
+            }
+            else {
+                let i = 6
+                while (this.boardData.isEmpty(0, i)) {
+                    i--;
+                }
+                if (i === 3) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    }
+
+    //this func check that you can castle (based on if the cells between the king and the rook are empty and if the rook and the king was never used before )
+    //this is the arrays rookHasBeenMoved:[player,row,col,if its has been moved] and kingHasBeenMoved[player,if its has been moved]
+    //this.kingHasBeenMoved = [[DARK_PLAYER,false],[WHITE_PLAYER,false]];
+    //this.rookHasBeenMoved = [[DARK_PLAYER,7,0,false],[DARK_PLAYER,7,7,false],[WHITE_PLAYER,0,0,false],[WHITE_PLAYER,0,7,false]];
+    canCastle(kingHasBeenMoved, rookHasBeenMoved, piece) {
+        if (piece !== undefined) {
+            if (piece.player === WHITE_PLAYER) {
+                if (piece.col === 0) {
+                    if (kingHasBeenMoved[1][1] === false && rookHasBeenMoved[2][3] === false && this.isEmptyBetween(piece)) {
+                        let whiteCastling = document.createElement("p");
+                        whiteCastling.textContent = "You can Castle";
+                        whiteCastling.setAttribute('id', 'whiteCastling')
+                        div_White.appendChild(whiteCastling)
+                        return true;
+                    }
+                }
+                else {
+                    if (kingHasBeenMoved[1][1] === false && rookHasBeenMoved[3][3] === false && this.isEmptyBetween(piece)) {
+                        let whiteCastling = document.createElement("p");
+                        whiteCastling.setAttribute('id', 'whiteCastling')
+                        whiteCastling.textContent = "You can Castle";
+                        div_White.appendChild(whiteCastling);
+                        return true;
+                    }
+                }
+            }
+            else {
+                if (kingHasBeenMoved[0][1] === false && rookHasBeenMoved[0][3] === false && this.isEmptyBetween(piece)) {
+                    let darkCastling = document.createElement("p");
+                    darkCastling.setAttribute('id', 'darkCastling')
+                    darkCastling.textContent = "You can Castle";
+                    div_Dark.appendChild(darkCastling);
+                    return true;
+                }
+                else if (kingHasBeenMoved[0][1] === false && rookHasBeenMoved[1][3] === false && this.isEmptyBetween(piece)) {
+                    let darkCastling = document.createElement("p");
+                    darkCastling.textContent = "You can Castle";
+                    div_Dark.appendChild(darkCastling);
+                    return true;
+                }
+            }
+        }
+
+    }
+
+    //this func change do the castling between the king and the rook
+    castling(row, col, piece) {
+        let whiteKing = this.boardData.getPiece(0, 3);
+        let DarkKing = this.boardData.getPiece(7, 3);
+        if (piece.col === 7 && col === 4 && piece.player === WHITE_PLAYER) {
+            whiteKing.col = 5;
+        }
+        else if (piece.col === 0 && col === 2 && piece.player === WHITE_PLAYER) {
+            whiteKing.col = 1;
+        }
+        else if (piece.col === 0 && col === 2 && piece.player === DARK_PLAYER) {
+            DarkKing.col = 1;
+        }
+        else if (piece.col === 7 && col === 4 && piece.player === DARK_PLAYER) {
+            DarkKing.col = 5;
+        }
+
+        //remove the paragraph "you can castle"
+        let removeWhiteCastling = document.getElementById("whiteCastling")
+        if (removeWhiteCastling !== null) {
+            removeWhiteCastling.remove();
+        }
+        let removeDarkCastling = document.getElementById("darkCastling")
+
+        if (removeDarkCastling !== null) {
+            removeDarkCastling.remove();
+        }
+
+
+    }
+
+    //a func that change the color of "white/dark players turn" to red ("white players turn"/"dark players turn")
+    redNeonSign() {
+        let div_White = document.getElementById("div_White")
+        let div_Dark = document.getElementById("div_Dark")
+        if (this.boardData.turn % 2 !== 0) {
+            div_White.classList.remove("whitePlayer")
+            div_Dark.classList.remove("darkSign")
+            div_White.classList.add("whiteSign")
+            div_Dark.classList.add("darkPlayer")
+
+        }
+        else {
+            div_Dark.classList.remove("darkPlayer")
+            div_White.classList.remove("whiteSign")
+            div_Dark.classList.add("darkSign")
+            div_White.classList.add("whitePlayer")
+        }
+    }
+
+
+
 
 
 }

@@ -40,6 +40,17 @@ function tryUpdateSelectedPiece(row, col) {
       table.rows[i].cells[j].classList.remove('onIt');
       table.rows[i].cells[j].classList.remove('beforeEat');
 
+      //remove the castling Paragraphs
+      let removeWhiteCastling = document.getElementById("whiteCastling")
+      if (removeWhiteCastling !== null) {
+        removeWhiteCastling.remove();
+      }
+      let removeDarkCastling = document.getElementById("darkCastling")
+
+      if (removeDarkCastling !== null) {
+        removeDarkCastling.remove();
+      }
+
     }
 
   }
@@ -59,6 +70,7 @@ function tryUpdateSelectedPiece(row, col) {
   }
   table.rows[row].cells[col].classList.add('onIt');
   selectedPiece = piece;
+  game.canCastle(game.kingHasBeenMoved, game.rookHasBeenMoved, selectedPiece);
 
 }
 
@@ -73,6 +85,7 @@ function onCellClick(row, col) {
     createChessBoard(game.boardData);
   }
   else {
+
     tryUpdateSelectedPiece(row, col);
     if (game.winner !== undefined && c === 1) {
       winnerPopup(game.winner);
