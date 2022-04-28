@@ -1,22 +1,23 @@
 class Game {
     constructor(firstPlayer) {
         this.boardData = new BoardData();
-        // this.kingHasBeenMoved = [];
         this.winner = undefined;
-        // this.currentPlayer = firstPlayer;
     }
 
-    //the function receive new row and col that we want to move to and the piece that we want to move to this location. its return true or false if the piece has moved
+    //the function receive new row and col that we want to move to and the piece that we want to move to this location. its return true or false if the piece has been moved
     movePiece(row, col, piece) {
         if (this.inRules(row, col, piece)) {
+
             if (this.boardData.getTurn() === piece.getPlayer()) {
                 const removedPiece = this.boardData.removePiece(row, col);
                 piece.row = row;
                 piece.col = col;
+                //if the piece thathas been eaten is the king stop the game(return false)
                 if (removedPiece !== undefined && removedPiece.getType() === 'king') {
                     this.winner = piece.player;
                     return false;
                 }
+                //check if the pawn has been arrived to its opponent first row and if he arrived transform him to a queen
                 if (piece.type === 'pawn') {
                     if (piece.player === WHITE_PLAYER && piece.row === 7) {
                         this.changeToQueen(piece);
@@ -25,6 +26,7 @@ class Game {
                         this.changeToQueen(piece);
                     }
                 }
+                //after every click i want that the color of the actual player that needs to play transform itself to red 
                 let div_White = document.getElementById("div_White")
                 let div_Dark = document.getElementById("div_Dark")
                 if (this.boardData.turn % 2 !== 0) {
@@ -41,11 +43,13 @@ class Game {
                     div_White.classList.add("whitePlayer")
                 }
 
+
                 this.boardData.turn++;
 
+                //this func check that the king is not in check
+                this.previousPiecesPlayer();
 
-                console.log(this.previousPiecesPlayer());
-
+                //this func show us if a pieces was eaten and if it was so its show us on the screen wich piece
                 if (removedPiece !== undefined)
                     this.addEatenPiece(removedPiece);
 
@@ -114,7 +118,8 @@ class Game {
             if (possibleMoves[i][0] === kingIndex[0] && possibleMoves[i][1] === kingIndex[1]) {
 
                 let piece = this.boardData.getPiece(kingIndex[0], kingIndex[1]);
-                console.log("Check! The " + piece.player + " king is in danger");
+
+                //if there is a check its gonna create a paragraph and the players gonna see that there is a check(in red color)
                 if (piece.player === DARK_PLAYER) {
                     let div_Dark = document.getElementById("div_Dark")
                     const Check = document.createElement("p");
@@ -132,6 +137,7 @@ class Game {
                 return true;
             }
         }
+        //this erase the "check" sign if there is not a check
         let p1 = document.getElementById("checkDark")
         let p2 = document.getElementById("checkWhite")
         if (p1 !== null) {
@@ -143,12 +149,10 @@ class Game {
         return false;
     }
 
-
+    //create an image and add it to the screen if a pieces was eaten
     addEatenPiece(removedPiece) {
-        //receive a cell that we want to add the img to,the type of the piece(pawn,king,etc...),the name-"white-type"/"dark-type",row and col (the same of the cell)
         const image = document.createElement("img");
         image.src = "images/" + removedPiece.player + "/" + removedPiece.type + ".svg";
-        //image.setAttribute("id",);
         if (removedPiece.player === WHITE_PLAYER) {
             div_Dark.appendChild(image);
         }
@@ -158,10 +162,7 @@ class Game {
 
     }
 
-
-
-
-
+    //TODO:CASTLING
 
     //func that checking if there was a first move anf if there was it returning a list of the color of the player and true
     //TODO:check what to put in the list before its returning this and where (maybe in the constructor(?))

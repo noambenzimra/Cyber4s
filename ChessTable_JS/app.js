@@ -19,9 +19,10 @@ let beforeEat = false;
 let cantEat = false;
 let c = 1;
 
-//____________________________________________________________________global function. like-addImage,addimageByIndex,onCellClick
+//____________________________________________________________________global function. like-addImage,onCellClick
+
+//receive a cell that we want to add the img to,the type of the piece(pawn,king,etc...),the name-"white-type"/"dark-type",row and col (the same of the cell)
 function addImage(cell, type, name, row, col) {
-  //receive a cell that we want to add the img to,the type of the piece(pawn,king,etc...),the name-"white-type"/"dark-type",row and col (the same of the cell)
   const image = document.createElement("img");
   image.src = "images/" + type + "/" + name + ".svg";
   image.setAttribute("id", row + " " + col);
@@ -29,6 +30,7 @@ function addImage(cell, type, name, row, col) {
 }
 
 let selectedCell = undefined;
+
 
 function tryUpdateSelectedPiece(row, col) {
   // Clear all previous possible moves
@@ -41,6 +43,8 @@ function tryUpdateSelectedPiece(row, col) {
     }
 
   }
+
+
   // Show possible moves
   const piece = game.boardData.getPiece(row, col);
   if (piece !== undefined && game.boardData.getTurn() === piece.getPlayer()) {
@@ -49,7 +53,6 @@ function tryUpdateSelectedPiece(row, col) {
       const cell = table.rows[possibleMove[0]].cells[possibleMove[1]];
 
       if (!piece.cantEat) {
-        //TODO:maybe adds eatsign func here
         cell.classList.add('options');
       }
     }
@@ -66,12 +69,8 @@ function onCellClick(row, col) {
   // row, col - the currently clicked cell - it may be empty, or have a piece.
   if (selectedPiece !== undefined && game.movePiece(row, col, selectedPiece)) {
     selectedPiece = undefined;
-    // Recreate whole board - this is not efficient, but doesn't affect user experience
+    // Recreate whole board
     createChessBoard(game.boardData);
-    //TODO:alert if king is in danger
-    // if (game.kingInDanger(game.boardData.getPiece(row, col))) {
-    //   alert("your king is in danger");
-    // }
   }
   else {
     tryUpdateSelectedPiece(row, col);
@@ -82,6 +81,7 @@ function onCellClick(row, col) {
   }
 }
 
+//create a div that pop up and says that the player x wins
 function winnerPopup(gameWinner) {
   const winnerPopup = document.createElement('div');
   winnerPopup.textContent = gameWinner + ' player wins!';
@@ -89,6 +89,8 @@ function winnerPopup(gameWinner) {
   table.appendChild(winnerPopup)
 
 }
+
+//create the chess board
 function createChessBoard(boardData) {
   table = document.getElementById(CHESS_BOARD_ID);
   if (table !== null) {
@@ -115,7 +117,6 @@ function createChessBoard(boardData) {
       let td = document.createElement("td");
       tr.appendChild(td);
       tr.appendChild(th);
-      //let x=i,y=j
       td.setAttribute("id", col);
       if ((row + col) % 2 == 0) {
         td.className = "black";
@@ -123,7 +124,6 @@ function createChessBoard(boardData) {
         td.className = "white";
       }
       td.addEventListener("click", () => onCellClick(row, col));
-      //___________________________________________________________________________
     }
     tblBody.appendChild(tr);
     thead.appendChild(th);
@@ -143,9 +143,16 @@ function createChessBoard(boardData) {
   }
 
 }
+
+
 function initGame() {
-  // Create list of pieces (32 total)
   game = new Game();
   createChessBoard(game.boardData);
+
+  //btn that reload the page (replay button)
+  let replayBtn = document.getElementById("replayBtn");
+  replayBtn.addEventListener("click", () => { document.location.reload(); });
 }
+
 window.addEventListener("load", initGame);
+

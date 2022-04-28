@@ -16,6 +16,20 @@ h2 {
     color: #b5915f;
 }
 
+.button {
+    background-color: #b5915f;
+    margin-bottom: 20px;
+    transition-duration: 0.4s;
+    padding: 12px 28px;
+    border-radius: 6px;
+    border: none;
+}
+
+.button:hover {
+    background-color: #b5915f;
+    color: white;
+}
+
 .whiteSign {
     z-index: 2;
     position: absolute;
@@ -39,7 +53,6 @@ h2 {
     font-size: x-large;
     text-align: center;
     margin-left: 70%;
-    /* font-weight: bold; */
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #FF3131, 0 0 20px #FF3131, 0 0 25px #FF3131, 0 0 30px #FF3131, 0 0 35px #FF3131;
 
@@ -81,11 +94,8 @@ table {
     position: relative;
     align-items: center;
     margin: 0 auto;
-    /* width: 10%;
-    height: 100%; */
     border: 29px solid #462921;
     border-collapse: separate;
-    /* margin: 2% 25% */
 }
 
 th {
@@ -99,7 +109,6 @@ td {
 }
 
 td {
-    /* text-align: left; */
     width: 64px;
     height: 64px;
 
@@ -159,14 +168,11 @@ tr:nth-of-type(odd) td:nth-of-type(odd):hover {
 
 @media only screen and (max-width:650px) {
     table {
-        /* margin: 0; */
-        /* height: 50%; */
         float: left;
         border: 19px solid #462921;
     }
 
     td {
-        /* text-align: left; */
         margin-right: 50%;
         table-layout: fixed;
         width: 64px;

@@ -31,7 +31,6 @@ class Piece {
         } else if (this.type === BISHOP) {
             moves = this.getBishopMoves(boardData);
         } else if (this.type === KING) {
-            //   console.log(this.getKingRelativeMoves());
             moves = this.getKingMoves(boardData);
         } else if (this.type === QUEEN) {
             moves = this.getQueenMoves(boardData);
@@ -40,7 +39,6 @@ class Piece {
         }
 
         // Get absolute moves
-        //console.log(moves);
         if (this.type === PAWN) {
             let pawnAbsoluteMoves = [];
             for (let relativeMove of moves) {
@@ -67,12 +65,11 @@ class Piece {
                 filteredMoves.push(absoluteMove);
             }
         }
-        //console.log("filteredMoves", filteredMoves);
         return filteredMoves;
     }
 
 
-    //return the pawn moves ,without the move that the piece have another piece in front of him
+    //return the pawn moves
     getPawnMoves() {
         let result = [];
         if (this.player === DARK_PLAYER) {
@@ -129,7 +126,7 @@ class Piece {
         }
         return result;
     }
-
+    //return rook moves
     getRookMoves(boardData) {
         let result = [];
         result = result.concat(this.getMovesInDirection(-1, 0, boardData));
@@ -180,7 +177,7 @@ class Piece {
     }
 
 
-    //return the bishop moves ,without the move that the piece have another piece in front of him
+    //return the bishop moves
     getBishopMoves() {
         let result = [];
         result = result.concat(this.getMovesInDirection(-1, -1, game.boardData));
@@ -206,13 +203,14 @@ class Piece {
         return result;
     }
 
-    //return the queen moves ,without the move that the piece have another piece in front of him
+    //return the queen moves 
     getQueenMoves(boardData) {
         let result = this.getBishopMoves(boardData);
         result = result.concat(this.getRookMoves(boardData));
         return result;
     }
 
+    //func that return the opponent
     getOpponent() {
         if (this.player === WHITE_PLAYER) {
             return DARK_PLAYER;
@@ -236,6 +234,7 @@ class Piece {
         return this.startCol;
     }
 
+    //if the piece can eat someone itll change the background color into a red color
     eatSign(row, col) {
         const cell = table.rows[row].cells[col];
         cell.classList.add('beforeEat');
