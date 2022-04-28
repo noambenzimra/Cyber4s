@@ -68,6 +68,10 @@ function onCellClick(row, col) {
     selectedPiece = undefined;
     // Recreate whole board - this is not efficient, but doesn't affect user experience
     createChessBoard(game.boardData);
+    //TODO:alert if king is in danger
+    // if (game.kingInDanger(game.boardData.getPiece(row, col))) {
+    //   alert("your king is in danger");
+    // }
   }
   else {
     tryUpdateSelectedPiece(row, col);
@@ -107,8 +111,6 @@ function createChessBoard(boardData) {
     let th = document.createElement("th");
     let text = document.createTextNode(String.fromCharCode(97 + row));
     th.appendChild(text);
-
-    // tr.appendChild(img.src);
     for (let col = 0; col < 8; col++) {
       let td = document.createElement("td");
       tr.appendChild(td);
@@ -120,9 +122,6 @@ function createChessBoard(boardData) {
       } else {
         td.className = "white";
       }
-      //___________________________________________________________________________
-      //firstClick = [i, j];
-      // console.log(firstClick + "firstClick");
       td.addEventListener("click", () => onCellClick(row, col));
       //___________________________________________________________________________
     }

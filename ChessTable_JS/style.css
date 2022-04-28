@@ -17,27 +17,53 @@ h2 {
 }
 
 .whiteSign {
-
-    color: #b5915f;
-}
-
-.blackSign {
-    color: #725122;
-}
-
-/* .whitePlayer {
     display: inline-block;
-    width: 300px;
-    text-align: left;
+    color: #FF3131;
+    font-size: x-large;
+    width: 490px;
+    text-align: center;
     margin-right: 0%;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #FF3131, 0 0 20px #FF3131, 0 0 25px #FF3131, 0 0 30px #FF3131, 0 0 35px #FF3131;
+}
+
+.darkSign {
+    display: inline-block;
+    width: 450px;
+    color: #FF3131;
+    font-size: x-large;
+    text-align: center;
+    margin-left: 65%;
+    /* font-weight: bold; */
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #FF3131, 0 0 20px #FF3131, 0 0 25px #FF3131, 0 0 30px #FF3131, 0 0 35px #FF3131;
+
+}
+
+.container {
+    display: flex;
+    align-items: baseline;
+}
+
+.whitePlayer {
+    display: inline-block;
+    color: #b5915f;
+    font-size: x-large;
+    width: 490px;
+    text-align: center;
+    margin-right: 0%;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 .darkPlayer {
     display: inline-block;
-    width: 300px;
-    text-align: right;
-    margin-left: 80%;
-} */
+    width: 450px;
+    color: #725122;
+    font-size: x-large;
+    text-align: center;
+    margin-left: 65%;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
 
 table {
     position: relative;
@@ -47,7 +73,7 @@ table {
     height: 100%; */
     border: 29px solid #462921;
     border-collapse: separate;
-    margin: 2% 25%
+    /* margin: 2% 25% */
 }
 
 th {
@@ -121,7 +147,7 @@ tr:nth-of-type(odd) td:nth-of-type(odd):hover {
 
 @media only screen and (max-width:650px) {
     table {
-        margin: 0;
+        /* margin: 0; */
         /* height: 50%; */
         float: left;
         border: 19px solid #462921;
@@ -129,10 +155,13 @@ tr:nth-of-type(odd) td:nth-of-type(odd):hover {
 
     td {
         /* text-align: left; */
+        margin-right: 50%;
+        table-layout: fixed;
         width: 64px;
-        height: 64px;
+        height: 48px;
 
     }
+
 
 
 

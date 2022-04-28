@@ -143,7 +143,7 @@ class Piece {
         for (let i = 1; i < BOARD_SIZE; i++) {
             let row = this.row + directionRow * i;
             let col = this.col + directionCol * i;
-            if (boardData.isEmpty(row, col)) {
+            if (game.boardData.isEmpty(row, col)) {
                 result.push([row, col]);
             } else if (game.boardData.isPlayer(row, col, this.getOpponent())) {
                 result.push([row, col]);
