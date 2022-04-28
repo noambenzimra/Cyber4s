@@ -25,17 +25,8 @@ class Game {
                         this.changeToQueen(piece);
                     }
                 }
-                // if (piece.getType() === 'king') {
-                //     this.kingHasBeenMoved(piece);
-                // }
-                // if (piece.getType() === 'rook') {
-                //     this.rookHasBeenMoved(piece);
-                // }
-                // let h2 = document.querySelector("h2")
                 let div_White = document.getElementById("div_White")
-                console.log(div_White);
                 let div_Dark = document.getElementById("div_Dark")
-                console.log(div_Dark);
                 if (this.boardData.turn % 2 !== 0) {
                     div_White.classList.remove("whitePlayer")
                     div_Dark.classList.remove("darkSign")
@@ -51,6 +42,12 @@ class Game {
                 }
 
                 this.boardData.turn++;
+
+
+                console.log(this.previousPiecesPlayer());
+
+                if (removedPiece !== undefined)
+                    this.addEatenPiece(removedPiece);
 
 
                 return true;
@@ -78,6 +75,7 @@ class Game {
         return false;
     }
 
+    //func that change automaticly the pawn to queen when he get to the opponent border
     changeToQueen(piece) {
         if (piece.type === 'pawn' && piece.player === WHITE_PLAYER && piece.row === 7) {
             piece.type = 'queen'
@@ -86,69 +84,79 @@ class Game {
             piece.type = 'queen'
         }
         return piece;
-
-
     }
 
-    // kingInDanger(boardData) {
-    //     //  let possibleMoves = piece.getPossibleMoves(this.boardData);
-    //     // for (let possibleMove of possibleMoves) {
-    //     console.log("hello");
-    //     for (let i = 0; i < BOARD_SIZE; i++) {
-    //         for (let j = 0; j < BOARD_SIZE; j++) {
-    //             let piece = this.boardData.getPiece(i, j);
-    //             if (piece === undefined) {
-    //                 continue;
-    //             }
-    //             let possibleMoves = piece.getPossibleMoves(boardData);
-    //             for (let possibleMove of possibleMoves) {
-    //                 let pieceInDanger = this.boardData.getPiece(possibleMove[0], possibleMove[1]);
-    //                 if (pieceInDanger === 'king') {
-    //                     return true;
-    //                 }
-    //             }
-    //         }
-    //         return false;
-    //     }
-    // }
 
-    //  previousPiecesPlayer() {
-    //     // Find the pieces of the previous player has on the board:
-    //     let previousPiecesPlayer = [];
-    //     for (let piece of game.boardData.pieces) {
-    //       if (piece.getOpponent() === game.currentPlayer) {
-    //         previousPiecesPlayer.push(piece);
-    //       }
-    //     }
+    //a func that check if there is a check in the game and alert the players
+    previousPiecesPlayer() {
+        // Find the pieces of the previous player has on the board:
+        let previousPiecesPlayer = [];
+        for (let piece of this.boardData.pieces) {
+            if (piece.getOpponent() === this.boardData.getTurn()) {
+                previousPiecesPlayer.push(piece);
+            }
+        }
 
-    //     // Get an array of possible moves of each soldier of the player who played last:
-    //     let result = [];
-    //     for (let piece of previousPiecesPlayer) {
-    //       // console.log(piece.getPossibleMoves(game.boardData));
-    //       result = result.concat(piece.getPossibleMoves(game.boardData));
-    //     }
+        // Get an array of possible moves of each soldier of the player who played last:
+        let possibleMoves = [];
+        for (let piece of previousPiecesPlayer) {
+            possibleMoves = possibleMoves.concat(piece.getPossibleMoves(this.boardData));
+        }
+        // Finding the oponnent King's Location(row, col)
+        let kingIndex;
+        for (let piece of this.boardData.pieces) {
+            if (piece.type === KING && piece.player === this.boardData.getTurn()) {
+                kingIndex = [piece.row, piece.col];
+            }
+        }
+        // Check if one of the next cells that the last player can advance to is the King's cell:
+        for (let i = 0; i < possibleMoves.length; i++) {
+            if (possibleMoves[i][0] === kingIndex[0] && possibleMoves[i][1] === kingIndex[1]) {
 
-    //     // Finding the oponnent King's Location(row, col) - like this : [0, 3]
-    //     let kingIndex;
-    //     for (let i of game.boardData.pieces) {
-    //       if (i.type === KING && i.player === game.currentPlayer) {
-    //         // console.log([i.row, i.col]);
-    //         kingIndex = [i.row, i.col];
-    //       }
-    //     }
+                let piece = this.boardData.getPiece(kingIndex[0], kingIndex[1]);
+                console.log("Check! The " + piece.player + " king is in danger");
+                if (piece.player === DARK_PLAYER) {
+                    let div_Dark = document.getElementById("div_Dark")
+                    const Check = document.createElement("p");
+                    Check.setAttribute('id', 'checkDark');
+                    Check.textContent = "Check!";
+                    div_Dark.appendChild(Check);
+                }
+                else {
+                    let div_White = document.getElementById("div_White")
+                    const Check = document.createElement("p");
+                    Check.setAttribute('id', 'checkWhite');
+                    Check.textContent = "Check!";
+                    div_White.appendChild(Check);
+                }
+                return true;
+            }
+        }
+        let p1 = document.getElementById("checkDark")
+        let p2 = document.getElementById("checkWhite")
+        if (p1 !== null) {
+            p1.remove();
+        }
+        if (p2 !== null) {
+            p2.remove();
+        }
+        return false;
+    }
 
-    //     // Check if one of the next cells that the last player can advance to is the King's cell:
-    //     for (let i = 0; i < result.length; i++) {
-    //       if (result[i][0] === kingIndex[0] && result[i][1] === kingIndex[1]) {
-    //         console.log("Check! The king is in danger");
-    //         const Check = document.createElement("div");
-    //         Check.classList.add("Check-position");
-    //         Check.textContent = "Check!";
-    //         table.appendChild(Check);
-    //         return true;
-    //       }
-    //     }
-    //   }
+
+    addEatenPiece(removedPiece) {
+        //receive a cell that we want to add the img to,the type of the piece(pawn,king,etc...),the name-"white-type"/"dark-type",row and col (the same of the cell)
+        const image = document.createElement("img");
+        image.src = "images/" + removedPiece.player + "/" + removedPiece.type + ".svg";
+        //image.setAttribute("id",);
+        if (removedPiece.player === WHITE_PLAYER) {
+            div_Dark.appendChild(image);
+        }
+        else {
+            div_White.appendChild(image);
+        }
+
+    }
 
 
 

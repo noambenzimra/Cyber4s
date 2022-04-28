@@ -17,23 +17,28 @@ h2 {
 }
 
 .whiteSign {
+    z-index: 2;
+    position: absolute;
     display: inline-block;
     color: #FF3131;
     font-size: x-large;
-    width: 490px;
+    width: 260px;
     text-align: center;
-    margin-right: 0%;
+    margin-left: 0%;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #FF3131, 0 0 20px #FF3131, 0 0 25px #FF3131, 0 0 30px #FF3131, 0 0 35px #FF3131;
 }
 
+
 .darkSign {
+    z-index: 2;
+    position: absolute;
     display: inline-block;
     width: 450px;
     color: #FF3131;
     font-size: x-large;
     text-align: center;
-    margin-left: 65%;
+    margin-left: 70%;
     /* font-weight: bold; */
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #FF3131, 0 0 20px #FF3131, 0 0 25px #FF3131, 0 0 30px #FF3131, 0 0 35px #FF3131;
@@ -43,29 +48,36 @@ h2 {
 .container {
     display: flex;
     align-items: baseline;
+
 }
 
 .whitePlayer {
+    z-index: 2;
+    position: absolute;
     display: inline-block;
     color: #b5915f;
     font-size: x-large;
-    width: 490px;
+    width: 260px;
     text-align: center;
     margin-right: 0%;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 .darkPlayer {
+    padding-right: 0%;
+    z-index: 2;
+    position: absolute;
     display: inline-block;
     width: 450px;
     color: #725122;
     font-size: x-large;
     text-align: center;
-    margin-left: 65%;
+    margin-left: 70%;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 table {
+    z-index: 1;
     position: relative;
     align-items: center;
     margin: 0 auto;
