@@ -4,15 +4,23 @@ class Game {
         this.winner = undefined;
         this.kingHasBeenMoved = [[DARK_PLAYER, false], [WHITE_PLAYER, false]];
         this.rookHasBeenMoved = [[DARK_PLAYER, 7, 0, false], [DARK_PLAYER, 7, 7, false], [WHITE_PLAYER, 0, 0, false], [WHITE_PLAYER, 0, 7, false]];
+        this.isCheck = false;
     }
 
     //the function receive new row and col that we want to move to and the piece that we want to move to this location. its return true or false if the piece has been moved
     movePiece(row, col, piece) {
         if (this.inRules(row, col, piece)) {
-
             //this func are checking that if the player want to castle he just needs to put the rook near to the king (left or right it depends...) and this is doing the castling
             if (this.canCastle(this.kingHasBeenMoved, this.rookHasBeenMoved, piece) && piece.type === 'rook') {
+                console.log(this.isCheck);
                 this.castling(row, col, piece);
+                this.isCheck = false;
+            }
+
+            if (piece.type === 'king' || piece.type === 'rook') {
+                // console.log(piece.col);
+                this.hasBeenMoved(piece);
+
             }
 
             if (this.boardData.getTurn() === piece.getPlayer()) {
@@ -21,10 +29,6 @@ class Game {
                 piece.col = col;
 
                 //check whats specific rook/king has moved to block the castling
-                if (piece.type === 'king' || piece.type === 'rook') {
-                    this.hasBeenMoved(piece);
-
-                }
 
 
                 //if the piece thathas been eaten is the king stop the game(return false)
@@ -46,7 +50,9 @@ class Game {
                 this.boardData.turn++;
 
                 //this func check that the king is not in check
-                this.previousPiecesPlayer();
+
+                // this.previousPiecesPlayer();
+                this.previousPiecesPlayer()
 
                 //this func show us if a pieces was eaten and if it was so its show us on the screen wich piece
                 if (removedPiece !== undefined)
@@ -112,7 +118,7 @@ class Game {
                 kingPosition = [piece.row, piece.col];
             }
         }
-        // Check if one of the next cells that the last player can advance to is the King's cell:
+        // if one of the next cells that the last player can advance to is the King's cell:
         for (let position = 0; position < possibleMoves.length; position++) {
             if (possibleMoves[position][0] === kingPosition[0] && possibleMoves[position][1] === kingPosition[1]) {
 
@@ -125,6 +131,7 @@ class Game {
                     Check.setAttribute('id', 'checkDark');
                     Check.textContent = "Check!";
                     div_Dark.appendChild(Check);
+                    this.isCheck = true;
                 }
                 else {
                     let div_White = document.getElementById("div_White")
@@ -132,6 +139,7 @@ class Game {
                     Check.setAttribute('id', 'checkWhite');
                     Check.textContent = "Check!";
                     div_White.appendChild(Check);
+                    this.isCheck = true;
                 }
                 return true;
             }
@@ -161,6 +169,8 @@ class Game {
 
     }
 
+    //this.kingHasBeenMoved = [[DARK_PLAYER,false],[WHITE_PLAYER,false]];
+    //this.rookHasBeenMoved = [[DARK_PLAYER,7,0,false],[DARK_PLAYER,7,7,false],[WHITE_PLAYER,0,0,false],[WHITE_PLAYER,0,7,false]];
     //this func check if the king/the rook has been moved and if its true its gonna update in the  this.kingHasBeenMoved/this.rookHasBeenMoved(true/false)
     hasBeenMoved(piece) {
         if (piece.type === 'king') {
@@ -179,19 +189,23 @@ class Game {
         }
         else if (piece.type === 'rook') {
             if (piece.player === DARK_PLAYER) {
-                if (piece.startCol === 0) {
+                //console.log("before  " + piece.col);
+                if (piece.col === 0) {
+                    // console.log("after");
                     this.rookHasBeenMoved[0][3] = true;
                 }
-                else {
+                else if (piece.col === 7) {
                     this.rookHasBeenMoved[1][3] = true;
                 }
             }
             else {
                 if (piece.player === WHITE_PLAYER) {
-                    if (piece.startCol === 0) {
+                    if (piece.col === 0) {
+
                         this.rookHasBeenMoved[2][3] = true;
+
                     }
-                    else {
+                    else if (piece.col === 7) {
                         this.rookHasBeenMoved[3][3] = true;
                     }
                 }
@@ -257,59 +271,92 @@ class Game {
     canCastle(kingHasBeenMoved, rookHasBeenMoved, piece) {
         if (piece !== undefined) {
             if (piece.player === WHITE_PLAYER) {
+
                 if (piece.col === 0) {
-                    if (kingHasBeenMoved[1][1] === false && rookHasBeenMoved[2][3] === false && this.isEmptyBetween(piece)) {
+                    //console.log(rookHasBeenMoved[2][3]);
+                    if (kingHasBeenMoved[1][1] === false && rookHasBeenMoved[2][3] === false && this.isEmptyBetween(piece) && this.isCheck === false) {
+                        //console.log("1");
                         let whiteCastling = document.createElement("p");
                         whiteCastling.textContent = "You can Castle";
                         whiteCastling.setAttribute('id', 'whiteCastling')
                         div_White.appendChild(whiteCastling)
+
+                        //-------------------------------------------------------------------------------------------
+                        // const castlePaintCell = table.rows[0].cells[2];
+                        // castlePaintCell.classList.add('castlingCell');
+
                         return true;
                     }
                 }
                 else {
-                    if (kingHasBeenMoved[1][1] === false && rookHasBeenMoved[3][3] === false && this.isEmptyBetween(piece)) {
+                    if (kingHasBeenMoved[1][1] === false && rookHasBeenMoved[3][3] === false && this.isEmptyBetween(piece) && this.isCheck === false) {
+                        // console.log("2");
                         let whiteCastling = document.createElement("p");
                         whiteCastling.setAttribute('id', 'whiteCastling')
                         whiteCastling.textContent = "You can Castle";
                         div_White.appendChild(whiteCastling);
+
+                        //-------------------------------------------------------------------------------------------
+                        // const castlePaintCell = table.rows[0].cells[4];
+                        // castlePaintCell.classList.add('castlingCell');
+
                         return true;
                     }
                 }
             }
             else {
-                if (kingHasBeenMoved[0][1] === false && rookHasBeenMoved[0][3] === false && this.isEmptyBetween(piece)) {
+                if (piece.col === 0) {
+                    if (kingHasBeenMoved[0][1] === false && rookHasBeenMoved[0][3] === false && this.isEmptyBetween(piece) && this.isCheck === false) {
+                        // console.log("3");
+                        let darkCastling = document.createElement("p");
+                        darkCastling.setAttribute('id', 'darkCastling')
+                        darkCastling.textContent = "You can Castle";
+                        div_Dark.appendChild(darkCastling);
+
+                        //-------------------------------------------------------------------------------------------
+                        // const castlePaintCell = table.rows[7].cells[2];
+                        // castlePaintCell.classList.add('castlingCell');
+                        return true;
+                    }
+                }
+                else if (kingHasBeenMoved[0][1] === false && rookHasBeenMoved[1][3] === false && this.isEmptyBetween(piece) && this.isCheck === false) {
+                    //console.log("4");
                     let darkCastling = document.createElement("p");
                     darkCastling.setAttribute('id', 'darkCastling')
                     darkCastling.textContent = "You can Castle";
                     div_Dark.appendChild(darkCastling);
-                    return true;
-                }
-                else if (kingHasBeenMoved[0][1] === false && rookHasBeenMoved[1][3] === false && this.isEmptyBetween(piece)) {
-                    let darkCastling = document.createElement("p");
-                    darkCastling.textContent = "You can Castle";
-                    div_Dark.appendChild(darkCastling);
+
+                    //--------------------------------------------------------------------------------------------------
+                    // const castlePaintCell = table.rows[7].cells[4];
+                    // castlePaintCell.classList.add('castlingCell');
                     return true;
                 }
             }
         }
 
     }
-
     //this func change do the castling between the king and the rook
     castling(row, col, piece) {
+
         let whiteKing = this.boardData.getPiece(0, 3);
         let DarkKing = this.boardData.getPiece(7, 3);
-        if (piece.col === 7 && col === 4 && piece.player === WHITE_PLAYER) {
-            whiteKing.col = 5;
+        if (piece.player === WHITE_PLAYER) {
+            if (piece.col === 7 && col === 4) {
+                //let castlePaintCell = document.classList.add('castlingCell')
+                whiteKing.col = 5;
+
+            }
+            else if (piece.col === 0 && col === 2) {
+                whiteKing.col = 1;
+            }
         }
-        else if (piece.col === 0 && col === 2 && piece.player === WHITE_PLAYER) {
-            whiteKing.col = 1;
-        }
-        else if (piece.col === 0 && col === 2 && piece.player === DARK_PLAYER) {
-            DarkKing.col = 1;
-        }
-        else if (piece.col === 7 && col === 4 && piece.player === DARK_PLAYER) {
-            DarkKing.col = 5;
+        else if (piece.player === DARK_PLAYER) {
+            if (piece.col === 0 && col === 2 && piece.player === DARK_PLAYER) {
+                DarkKing.col = 1;
+            }
+            else if (piece.col === 7 && col === 4 && piece.player === DARK_PLAYER) {
+                DarkKing.col = 5;
+            }
         }
 
         //remove the paragraph "you can castle"

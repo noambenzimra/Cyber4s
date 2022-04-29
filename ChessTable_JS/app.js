@@ -46,7 +46,6 @@ function tryUpdateSelectedPiece(row, col) {
         removeWhiteCastling.remove();
       }
       let removeDarkCastling = document.getElementById("darkCastling")
-
       if (removeDarkCastling !== null) {
         removeDarkCastling.remove();
       }
