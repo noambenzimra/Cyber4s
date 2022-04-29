@@ -9,4 +9,4 @@ chess features:
 
 2."Pawn promotion"-if a pawn are getting to his last row its gonna automaticly transform himself to a queen.
 
-3.if the is a check the game gonna alert the player
+3.if there is a check the game gonna alert the player
