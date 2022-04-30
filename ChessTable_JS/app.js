@@ -19,7 +19,6 @@ let beforeEat = false;
 let cantEat = false;
 let c = 1;
 
-//____________________________________________________________________global function. like-addImage,onCellClick
 
 //receive a cell that we want to add the img to,the type of the piece(pawn,king,etc...),the name-"white-type"/"dark-type",row and col (the same of the cell)
 function addImage(cell, type, name, row, col) {
@@ -40,7 +39,7 @@ function tryUpdateSelectedPiece(row, col) {
       table.rows[i].cells[j].classList.remove('onIt');
       table.rows[i].cells[j].classList.remove('beforeEat');
 
-      //remove the castling Paragraphs
+      //remove the castling-("you can castle") Paragraphs
       let removeWhiteCastling = document.getElementById("whiteCastling")
       if (removeWhiteCastling !== null) {
         removeWhiteCastling.remove();
@@ -161,7 +160,7 @@ function initGame() {
   game = new Game();
   createChessBoard(game.boardData);
 
-  //btn that reload the page (replay button)
+  //btn that reload the page ("Replay" button)
   let replayBtn = document.getElementById("replayBtn");
   replayBtn.addEventListener("click", () => { document.location.reload(); });
 }

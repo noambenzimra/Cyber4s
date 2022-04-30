@@ -18,7 +18,6 @@ class Game {
             }
 
             if (piece.type === 'king' || piece.type === 'rook') {
-                // console.log(piece.col);
                 this.hasBeenMoved(piece);
 
             }
@@ -28,10 +27,7 @@ class Game {
                 piece.row = row;
                 piece.col = col;
 
-                //check whats specific rook/king has moved to block the castling
-
-
-                //if the piece thathas been eaten is the king stop the game(return false)
+                //if the piece that has been eaten is the king stop the game(return false)
                 if (removedPiece !== undefined && removedPiece.getType() === 'king') {
                     this.winner = piece.player;
                     return false;
@@ -50,8 +46,6 @@ class Game {
                 this.boardData.turn++;
 
                 //this func check that the king is not in check
-
-                // this.previousPiecesPlayer();
                 this.previousPiecesPlayer()
 
                 //this func show us if a pieces was eaten and if it was so its show us on the screen wich piece
@@ -65,10 +59,8 @@ class Game {
         return false;
     }
 
-    //check if you can go there
+    //check if the piece can go to the(row and col) place
     inRules(row, col, piece) {
-        //  let rookHasBeenMoved = this.rookHasBeenMoved(piece);
-        //  let kingHasBeenMoved = this.kingHasBeenMoved(piece);
         let possibleMoves = piece.getPossibleMoves(this.boardData);
         for (const possibleMove of possibleMoves) {
             if (this.winner !== undefined) {
@@ -84,7 +76,7 @@ class Game {
         return false;
     }
 
-    //func that change automaticly the pawn to queen when he get to the opponent border
+    //"Pawn promotion"-if a pawn are getting to his last row its gonna automaticly transform himself to a queen.
     changeToQueen(piece) {
         if (piece.type === 'pawn' && piece.player === WHITE_PLAYER && piece.row === 7) {
             piece.type = 'queen'

@@ -234,7 +234,7 @@ class Piece {
         return this.startCol;
     }
 
-    //if the piece can eat someone itll change the background color into a red color
+    //if the piece can eat someone it'll change the background color into a red color
     eatSign(row, col) {
         const cell = table.rows[row].cells[col];
         cell.classList.add('beforeEat');
